@@ -1,7 +1,9 @@
 // node-fetch@2 is required since jest does not support node-fetch 3
 // eslint-disable-next-line max-len
 // cf https://stackoverflow.com/questions/69383514/node-fetch-3-0-0-and-jest-gives-syntaxerror-cannot-use-import-statement-outside
+// eslint-disable-next-line import/no-extraneous-dependencies
 const nodeFetch = require('node-fetch');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { Headers, Request, Response } = require('node-fetch');
 
 global.fetch = nodeFetch;

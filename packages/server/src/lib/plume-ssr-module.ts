@@ -1,6 +1,6 @@
 import { Injector } from 'plume-ts-di';
 import {
-  installRectPlumeSsrFrontendModule
+  installRectPlumeSsrFrontendModule,
 } from '@plume-ssr/browser';
 import { SsrConfigParser } from './config/SsrConfigParser';
 import { ServerLogger } from './logger/ServerLogger';

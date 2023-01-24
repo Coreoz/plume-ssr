@@ -45,5 +45,6 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', {
       'functions': false,
     }],
+    "import/extensions": ["error", "ignorePackages", {"": "never","ts": "never"}],
   },
 };

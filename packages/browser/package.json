@@ -22,15 +22,7 @@
     "typescript": "tsc --noEmit --outDir build/esm -p tsconfig.json",
     "eslint": "eslint src --ext .ts",
     "test": "jest --config jest.config.ts",
-    "prepare-release": "yarn clean && yarn typescript && yarn eslint && yarn test && yarn build",
-    "release": "release-it"
-  },
-  "release-it": {
-    "hooks": {
-      "before:init": [
-        "yarn prepare-release"
-      ]
-    }
+    "prepare-release": "yarn clean && yarn typescript && yarn eslint && yarn test && yarn build"
   },
   "main": "build/cjs/index.js",
   "typings": "build/esm/index.d.ts",
@@ -72,7 +64,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.6.1",
-    "release-it": "^15.5.0",
     "rollup": "^3.8.1",
     "simple-http-rest-client": "^2.0.2",
     "simple-logging-system": "^1.1.0",

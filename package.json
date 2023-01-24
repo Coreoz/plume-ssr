@@ -18,11 +18,10 @@
     "start": "yarn workspace plume-ssr-sample start",
     "start-server": "yarn workspace plume-ssr-sample start-server",
     "build": "yarn workspaces foreach --from '@plume-ssr/**' run build",
-    "clean": "yarn workspaces foreach --from '@plume-ssr/**' run clean",
     "typescript": "yarn workspaces foreach --from '@plume-ssr/**' run typescript",
     "eslint": "yarn workspaces foreach --from '@plume-ssr/**' run eslint",
     "test": "yarn workspaces foreach --from '@plume-ssr/**' run test",
-    "prepare-release": "yarn clean && yarn typescript && yarn eslint && yarn test && yarn build",
+    "prepare-release": "yarn workspace @plume-ssr/browser prepare-release && yarn workspace @plume-ssr/server prepare-release",
     "release": "release-it"
   },
   "release-it": {

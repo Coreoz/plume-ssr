@@ -21,7 +21,7 @@
     "clean": "rm -rf build",
     "typescript": "tsc --noEmit --outDir build/esm -p tsconfig.json",
     "eslint": "eslint src --ext .ts",
-    "test": "jest --config jest.config.ts",
+    "test": "jest --passWithNoTests --config jest.config.ts",
     "prepare-release": "yarn clean && yarn typescript && yarn eslint && yarn test && yarn build"
   },
   "main": "build/cjs/index.js",

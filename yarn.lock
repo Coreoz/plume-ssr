@@ -1311,13 +1311,16 @@ __metadata:
   peerDependencies:
     "@plume-ssr/browser": "workspace:^"
     dayjs: ^1.0.0
+    esbuild: ^0.16.12
     express: ^1.0.0
     micro-observables: ^1.7.2
     minimist: ^1.0.0
     path: ^0.4.9
     plume-ts-di: ^1.2.3
+    rollup: ^3.8.1
     simple-http-rest-client: ^1.0.0
     simple-logging-system: ^1.0.0
+    vite: ^4.0.3
   languageName: unknown
   linkType: soft
 

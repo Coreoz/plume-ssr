@@ -21,8 +21,7 @@
     "typescript": "yarn workspaces foreach --from '@plume-ssr/**' run typescript",
     "eslint": "yarn workspaces foreach --from '@plume-ssr/**' run eslint",
     "test": "yarn workspaces foreach --from '@plume-ssr/**' run test",
-    "prepare-release": "yarn workspace @plume-ssr/browser prepare-release && yarn workspace @plume-ssr/server prepare-release",
-    "release": "yarn prepare-release && yarn workspaces run semantic-release -e semantic-release-monorepo"
+    "prepare-release": "yarn workspace @plume-ssr/browser prepare-release && yarn workspace @plume-ssr/server prepare-release"
   },
   "sideEffects": false,
   "devDependencies": {
@@ -32,8 +31,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "semantic-release": "^20.0.4",
-    "semantic-release-monorepo": "^7.0.5",
     "typescript": "4.9.4"
   },
   "workspaces": [

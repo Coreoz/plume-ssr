@@ -92,3 +92,13 @@ Yarn workspaces is used. This means that:
 - To start working first `yarn install` and `yarn build` must be run
 - To use any command on a specific workspace, the `yarn workspace` command must be used (from the root directory). For example: `yarn workspace @plume-ssr/browser build` or `yarn workspace @plume-ssr/browser add -D react`
 - The sample project should be used to test changes. So when some changes happen, `yarn build` or `yarn workspace @plume-ssr/server build` (with the correct project name) must be executed to build the library project
+
+Release process
+---------------
+- `git pull`
+- `git status`
+- `yarn prepare-release`
+- `yarn version [version to release]`
+- `yarn workspaces foreach npm publish`
+- `git push`
+- `git push --tags`

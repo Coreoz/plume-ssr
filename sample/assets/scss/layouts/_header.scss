@@ -1,0 +1,7 @@
+@use '../variables' as *;
+
+#main-header {
+  padding: 0 $box-padding;
+  display: flex;
+  justify-content: flex-end;
+}

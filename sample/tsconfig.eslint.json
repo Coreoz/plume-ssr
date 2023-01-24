@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src",
+    "server-ssr",
+    "building",
+    "asset.d.ts",
+    "tests",
+    "vite.config.ts"
+  ]
+}

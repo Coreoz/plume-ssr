@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "outDir": "ts-built",
+    "target": "ESNext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react",
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "plugins": [
+      { "transform": "ts-transformer-classname", "import": "diTransformerAdapter" },
+      { "transform": "ts-transformer-classname", "import": "classNameTransformer" }
+    ]
+  },
+  "include": [
+    "server-ssr/index.ts",
+    "src",
+    "asset.d.ts"
+  ]
+}

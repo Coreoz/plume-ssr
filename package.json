@@ -1,0 +1,43 @@
+{
+  "name": "plume-ssr",
+  "version": "1.0.0",
+  "description": "A framework to create an SSR server for a Plume project",
+  "author": "Aurélien Manteaux <amanteaux@coreoz.com> (https://coreoz.com)",
+  "contributors": [
+    "Wail Latif <wlatif@coreoz.com> (https://coreoz.com)"
+  ],
+  "repository": "https://github.com/coreoz/plume-ssr",
+  "homepage": "https://github.com/coreoz/plume-ssr",
+  "license": "Apache-2.0",
+  "keywords": [
+    "react",
+    "ssr",
+    "plume"
+  ],
+  "scripts": {
+    "start": "yarn workspace plume-ssr-sample start",
+    "start-server": "yarn workspace plume-ssr-sample start-server",
+    "build": "yarn workspaces foreach --from '@plume-ssr/**' run build",
+    "clean": "yarn workspaces foreach --from '@plume-ssr/**' run clean",
+    "typescript": "yarn workspaces foreach --from '@plume-ssr/**' run typescript",
+    "eslint": "yarn workspaces foreach --from '@plume-ssr/**' run eslint",
+    "test": "yarn workspaces foreach --from '@plume-ssr/**' run test",
+    "prepare-release": "yarn clean && yarn typescript && yarn eslint && yarn test && yarn build",
+    "release": "release-it"
+  },
+  "release-it": {
+    "hooks": {
+      "before:init": [
+        "yarn prepare-release"
+      ]
+    }
+  },
+  "devDependencies": {
+    "typescript": "4.9.4"
+  },
+  "workspaces": [
+    "sample",
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.3.1"
+}

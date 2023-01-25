@@ -3,14 +3,27 @@ import express from 'express';
 import { Logger } from 'simple-logging-system';
 import { SsrObservableManager } from 'plume-ssr-browser';
 
+const DEFAULT_CACHE_OPTIONS = {
+  expireAfterWriteInMillis: undefined,
+};
+
+/**
+ * Describes the cache option to apply to an observable data.
+ * @property expireAfterWriteInMillis - Time in milliseconds after which the cached data will be emptied.
+ */
+export type SsrObservableCacheOptions = {
+  expireAfterWriteInMillis?: number,
+};
+
 /**
  * Describes an observable parameter, for instance:
- * - {name: 'configuration', dependencyKeys: ['siteId']}
+ * - {name: 'configuration', dependencyKeys: ['siteId'], cacheOptions: {expireAfterWriteInMillis: 3000}}
  * - {name: 'cms-page', dependencyKeys: ['siteId', 'lang', 'pageAlias']}
  */
 export type SsrObservableParameters<K extends string> = {
   name: string,
   dependencyKeys: K[],
+  cacheOptions?: SsrObservableCacheOptions
   // TODO add options here: cache duration, max entries, etc. + clean up task
 };
 
@@ -20,13 +33,25 @@ export type SsrObservableParameters<K extends string> = {
 export type SsrConfigValue = string | number | boolean | undefined;
 
 /**
+ * An observable data with its metadata.
+ * The fetch timestamp will be used to optionally empty the data when they are expired.
+ *
+ * See {@link SsrObservableCacheOptions} for details
+ */
+type SsrObservableDataValue = {
+  data: unknown,
+  lastFetchTimestamp: number
+};
+
+/**
  * Describes the internal structure of the observable data
  */
 type SsrObservableData<K extends string> = {
   observable: WritableObservable<unknown>,
   dependencyKeys: Set<K>,
   currentConfigFiltered: Record<K, SsrConfigValue>,
-  latestDataByConfig: Map<string, unknown>,
+  latestDataByConfig: Map<string, SsrObservableDataValue>,
+  cacheOptions: SsrObservableCacheOptions
 };
 
 export const areRecordsEqual = (record1: Record<string, unknown>, record2: Record<string, unknown>) => {
@@ -101,8 +126,11 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
         observableData.observable.subscribe((newData) => {
           // Replace the latest data value for the current config
           observableData.latestDataByConfig.set(
-            makeConfigKey(this.currentConfig, observableData.dependencyKeys),
-            newData,
+            makeConfigKey(
+              this.currentConfig,
+              observableData.dependencyKeys,
+            ),
+            { data: newData, lastFetchTimestamp: Date.now() },
           );
         });
         return [observableName, observableData];
@@ -139,6 +167,7 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
         dependencyKeys: new Set(ssrConfiguration.dependencyKeys),
         currentConfigFiltered: {} as Record<K, SsrConfigValue>,
         latestDataByConfig: new Map(),
+        cacheOptions: { ...DEFAULT_CACHE_OPTIONS, ...ssrConfiguration.cacheOptions },
       },
     ];
   }
@@ -161,11 +190,29 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
         }, {} as Record<K, SsrConfigValue>);
       if (!areRecordsEqual(filteredNewConfig, observableData.currentConfigFiltered)) {
         const observableDataKey = makeConfigKey(this.currentConfig, observableData.dependencyKeys);
-        observableData.observable.set(observableData.latestDataByConfig.get(observableDataKey));
+        observableData.observable.set(observableData.latestDataByConfig.get(observableDataKey)?.data);
         observableData.currentConfigFiltered = filteredNewConfig;
       }
     }
   }
+
+  /**
+   * Clear cache data for expired observable data.
+   *
+   * @param currentTimestamp timestamp used to determine if the value of the observable is outdated
+   */
+  public clearExpiredObservableData = (currentTimestamp: number) => {
+    for (const observableData of this.data.values()) {
+      if (observableData.cacheOptions.expireAfterWriteInMillis) {
+        for (const [configKey, lastData] of observableData.latestDataByConfig.entries()) {
+          if (currentTimestamp - lastData.lastFetchTimestamp
+            > observableData.cacheOptions.expireAfterWriteInMillis) {
+            observableData.latestDataByConfig.delete(configKey);
+          }
+        }
+      }
+    }
+  };
 
   logData() {
     const printableData = Array.from(this.data.entries()).map(([observableKey, observableData]) => [

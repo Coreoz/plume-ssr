@@ -98,7 +98,9 @@ Release process
 - Check: `git pull`
 - Check: `git status`
 - Build: `yarn prepare-release`
-- Prepare version: `yarn version [version to release]`
+- Prepare version: `yarn versions [version to release]`
 - Publish version on NPM: `yarn workspaces foreach --from 'plume-ssr-**' npm publish --access public --tag [version to release] --otp [otp code]`
 - Create git tag: `git tag [version to release]`
 - Push tag: `git push --tags`
+- Prepare next version: `yarn versions [next version]`
+- Commit & push: `git add . && git commit -m "Prepare new version" && git push`

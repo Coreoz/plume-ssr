@@ -1,6 +1,6 @@
 {
   "name": "plume-ssr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A framework to create an SSR server for a Plume project",
   "author": "Aurélien Manteaux <amanteaux@coreoz.com> (https://coreoz.com)",
   "contributors": [
@@ -21,6 +21,7 @@
     "typescript": "yarn workspaces foreach --from 'plume-ssr-**' run typescript",
     "eslint": "yarn workspaces foreach --from 'plume-ssr-**' run eslint",
     "test": "yarn workspaces foreach --from 'plume-ssr-**' run test",
+    "versions": "yarn workspaces foreach version",
     "prepare-release": "yarn workspace plume-ssr-browser prepare-release && yarn workspace plume-ssr-server prepare-release"
   },
   "sideEffects": false,

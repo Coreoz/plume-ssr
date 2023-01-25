@@ -2,6 +2,7 @@ import { hydrateRoot } from 'react-dom/client';
 import * as ReactDOM from 'react-dom/client';
 import { PromiseMonitor } from 'simple-http-rest-client';
 import { Logger } from 'simple-logging-system';
+import { hydrationWrapper } from './HydrationWrapper';
 
 /**
  * Options passed to the renderApplication function to configure the application hydration.
@@ -54,15 +55,11 @@ export async function renderBrowserApplication(
   }
 
   if (rootDomElement.children.length > 0) {
-    // Essaie de re-render l'application tant qu'il y a des Promise en attente
-    const dummyDiv = document.createElement('div');
-    const dummyRoot = ReactDOM.createRoot(dummyDiv);
-
     try {
-      await prepareApplicationForHydration(() => dummyRoot.render(reactApp), promiseMonitors, option);
+      const unMountDummyApp = await renderDummyApp(reactApp);
+      await prepareApplicationForHydration(promiseMonitors, option);
+      unMountDummyApp();
       logger.info('All pending promises has been resolved, hydrating the received Html with the app...');
-      dummyRoot.unmount();
-
       hydrateRoot(rootDomElement, reactApp);
       logger.info(`DOM hydrated in ${Date.now() - currentMillis}ms`);
       return;
@@ -73,6 +70,17 @@ export async function renderBrowserApplication(
 
   ReactDOM.createRoot(rootDomElement).render(reactApp);
   logger.info(`DOM rendered in ${Date.now() - currentMillis}ms`);
+}
+
+function renderDummyApp(reactApp: JSX.Element) {
+  // Try to re-render the application while there are pending Promises
+  const dummyDiv = document.createElement('div');
+  const dummyRoot = ReactDOM.createRoot(dummyDiv);
+
+  return new Promise<() => void>((resolve) => {
+    const onAppMounted = () => resolve(() => dummyRoot.unmount());
+    dummyRoot.render(hydrationWrapper(onAppMounted, reactApp));
+  });
 }
 
 /**
@@ -89,23 +97,26 @@ export const extractMonitorContextData = (promiseMonitors: PromiseMonitor[]) => 
 /**
  * Render the application in a dummy Html element until all the data promises are resolved,
  *
- * @param renderApp
  * @param promiseMonitors
  * @param hydrationOption
  * @returns Promise resolved if all promises have been resolved,
  * Promise rejected if some promises are still pending after the maximum number of returns is reached.
  */
 async function prepareApplicationForHydration(
-  renderApp: () => void,
   promiseMonitors: PromiseMonitor[],
   hydrationOption: BrowserRenderOption,
 ) {
   const { maxRender } = hydrationOption;
 
   for (let i = 0; i < maxRender; i += 1) {
-    renderApp();
+    // attend un cycle supplémentaire pour vérifier que React n'est pas en train de monter des modules dynamiques
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise(
+      // eslint-disable-next-line no-promise-executor-return
+      (resolve) => setTimeout(resolve, 0),
+    );
 
-    if (promiseMonitors.some((promiseMonitor) => promiseMonitor.getRunningPromisesCount() === 0)) {
+    if (promiseMonitors.every((promiseMonitor) => promiseMonitor.getRunningPromisesCount() === 0)) {
       return Promise.resolve();
     }
 
@@ -120,7 +131,7 @@ async function prepareApplicationForHydration(
   }
 
   logger.warn(`There are still unresolved promises after ${maxRender} iterations`, {
-    promiseMonitors: promiseMonitors.map((promiseMonitor) => promiseMonitor.getRunningPromisesWithInfo()),
+    promiseMonitors: extractMonitorContextData(promiseMonitors),
   });
   return Promise.reject();
 }

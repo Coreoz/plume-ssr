@@ -1,6 +1,6 @@
 {
   "name": "plume-ssr",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A framework to create an SSR server for a Plume project",
   "author": "Aurélien Manteaux <amanteaux@coreoz.com> (https://coreoz.com)",
   "contributors": [

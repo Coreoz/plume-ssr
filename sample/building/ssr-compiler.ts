@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { filterImportsPlugin } from '@plume-ssr/server';
+import { filterImportsPlugin } from 'plume-ssr-server';
 
 /**
  * Utilisé pour builder le serveur SSR.

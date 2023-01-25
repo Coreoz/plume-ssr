@@ -1,5 +1,5 @@
 import { WritableObservable } from 'micro-observables';
-import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from '@plume-ssr/server';
+import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
 import express from 'express';
 import { SsrBrowserObservableManager, SsrObservableKey } from '../../src/services/ssr/SsrBrowserObservableManager';
 import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';

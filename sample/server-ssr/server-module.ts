@@ -1,5 +1,5 @@
 import { Injector } from 'plume-ts-di';
-import { SsrConfigProvider } from '@plume-ssr/server';
+import { SsrConfigProvider } from 'plume-ssr-server';
 import EnvironmentService from '../src/services/environment/EnvironmentService';
 import { ConfigProvider } from './config/ConfigProvider';
 import ServerEnvironmentService from './services/environment/ServerEnvironmentService';

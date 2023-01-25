@@ -1,7 +1,7 @@
 import { Injector } from 'plume-ts-di';
 import {
   installRectPlumeSsrFrontendModule,
-} from '@plume-ssr/browser';
+} from 'plume-ssr-browser';
 import { SsrConfigParser } from './config/SsrConfigParser';
 import { ServerLogger } from './logger/ServerLogger';
 import { ProgramArguments } from './config/ProgramArguments';

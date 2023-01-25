@@ -1,5 +1,5 @@
 import { Observable } from 'micro-observables';
-import { useObservable } from '@plume-ssr/browser';
+import { useObservable } from 'plume-ssr-browser';
 import { DependencyList, useRef, useState } from 'react';
 import { HttpError } from 'simple-http-rest-client';
 import { useOnComponentMountedWithSsrSupport, useOnComponentUnMounted } from '../react-hooks-alias/ReactHooksAlias';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { getGlobalInstance } from 'plume-ts-di';
-import { useObservable } from '@plume-ssr/browser';
+import { useObservable } from 'plume-ssr-browser';
 import { Link } from 'react-router-dom';
 import LocaleSelector from '../theme/LocaleSelector';
 import LocaleService from '../../i18n/locale/LocaleService';

@@ -3,7 +3,7 @@ import 'micro-observables/batchingForReactDom';
 import { createBrowserRouter } from 'react-router-dom';
 import { configureGlobalInjector, getGlobalInstance, Injector } from 'plume-ts-di';
 import './polyfill-loader';
-import { renderBrowserApplication } from '@plume-ssr/browser';
+import { renderBrowserApplication } from 'plume-ssr-browser';
 import HttpPromiseMonitor from './api/HttpPromiseMonitor';
 import installServicesModule from './services/services-module';
 import installComponentsModule from './components/components-module';

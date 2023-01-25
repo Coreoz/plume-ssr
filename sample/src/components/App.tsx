@@ -3,7 +3,7 @@ import {
   Outlet, RouteObject, RouterProvider,
 } from 'react-router-dom';
 import { Logger } from 'simple-logging-system';
-import { Navigate, useNavigate } from '@plume-ssr/browser';
+import { Navigate, useNavigate } from 'plume-ssr-browser';
 import Home from './pages/Home';
 import Layout from './layout/Layout';
 import ErrorPage from './pages/ErrorPage';

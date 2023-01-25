@@ -1,4 +1,4 @@
-import { useObservable } from '@plume-ssr/browser';
+import { useObservable } from 'plume-ssr-browser';
 import { getGlobalInstance } from 'plume-ts-di';
 import { HttpError } from 'simple-http-rest-client';
 import MessageService from '../messages/MessageService';

@@ -1,6 +1,6 @@
 import {
   SsrBaseConfig, SsrConfigParser, SsrConfigProvider, defaultSsrConfig,
-} from '@plume-ssr/server';
+} from 'plume-ssr-server';
 import * as path from 'path';
 
 export type ConfigType = SsrBaseConfig & {

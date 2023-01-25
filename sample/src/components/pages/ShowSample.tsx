@@ -1,5 +1,5 @@
 import { getGlobalInstance } from 'plume-ts-di';
-import { useObservable } from '@plume-ssr/browser';
+import { useObservable } from 'plume-ssr-browser';
 import React from 'react';
 import SampleService from '../../services/sample/SampleService';
 

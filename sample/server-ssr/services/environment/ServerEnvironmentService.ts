@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import express from 'express';
 import { Observable } from 'micro-observables';
-import { CurrentHttpRequestContainer } from '@plume-ssr/server';
+import { CurrentHttpRequestContainer } from 'plume-ssr-server';
 import EnvironmentService from '../../../src/services/environment/EnvironmentService';
 import { ConfigProvider } from '../../config/ConfigProvider';
 

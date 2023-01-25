@@ -3,8 +3,8 @@ import {
   RenderedApplication,
   renderSsrApplication,
   SsrHtmlRenderer,
-} from '@plume-ssr/server';
-import { SsrLocationContextHolder } from '@plume-ssr/browser';
+} from 'plume-ssr-server';
+import { SsrLocationContextHolder } from 'plume-ssr-browser';
 import HttpPromiseMonitor from '../../src/api/HttpPromiseMonitor';
 import createAppRenderer from '../renderer/AppRenderer';
 

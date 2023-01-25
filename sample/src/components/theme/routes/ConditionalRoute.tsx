@@ -1,6 +1,6 @@
 import React from 'react';
 import { Observable } from 'micro-observables';
-import { Navigate, useObservable } from '@plume-ssr/browser';
+import { Navigate, useObservable } from 'plume-ssr-browser';
 
 type Props = {
   shouldDisplayRoute: Observable<unknown>;

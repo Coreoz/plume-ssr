@@ -75,12 +75,12 @@ module.exports = {
         {
           'name': 'react-router-dom',
           'importNames': ['Navigate', 'useNavigate', 'redirect'],
-          'message': 'Please use the @plume-ssr/browser version instead.',
+          'message': 'Please use the plume-ssr-browser version instead.',
         },
         {
           name: 'micro-observables',
           importNames: ['useObservable'],
-          message: 'Please use the @plume-ssr/browser version instead.'
+          message: 'Please use the plume-ssr-browser version instead.'
         }
       ],
     }],

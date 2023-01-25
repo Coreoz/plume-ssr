@@ -1,5 +1,5 @@
 {
-  "name": "@plume-ssr/browser",
+  "name": "plume-ssr-browser",
   "version": "1.0.0",
   "description": "A framework to create an SSR server for a React Plume project",
   "author": "Aurélien Manteaux <amanteaux@coreoz.com> (https://coreoz.com)",

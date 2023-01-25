@@ -1,5 +1,5 @@
 import express from 'express';
-import { extractMonitorContextData } from '@plume-ssr/browser';
+import { extractMonitorContextData } from 'plume-ssr-browser';
 import { PromiseMonitor } from 'simple-http-rest-client';
 import { Logger } from 'simple-logging-system';
 

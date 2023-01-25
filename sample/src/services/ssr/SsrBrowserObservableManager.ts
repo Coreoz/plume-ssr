@@ -1,5 +1,5 @@
 import { observable, WritableObservable } from 'micro-observables';
-import { SsrObservableManager } from '@plume-ssr/browser';
+import { SsrObservableManager } from 'plume-ssr-browser';
 
 export type SsrObservableName = 'sample' | 'contentful-footer' | 'contentful-page';
 

@@ -4,8 +4,8 @@ import {
   ApplicationHtmlRenderer,
   RenderedApplication,
   CurrentHttpRequestContainer,
-} from '@plume-ssr/server';
-import { SsrLocationContext, SsrLocationContextHolder } from '@plume-ssr/browser';
+} from 'plume-ssr-server';
+import { SsrLocationContext, SsrLocationContextHolder } from 'plume-ssr-browser';
 import ReactDOMServer from 'react-dom/server';
 import { createMemoryRouter } from 'react-router-dom';
 import App from '../../src/components/App';

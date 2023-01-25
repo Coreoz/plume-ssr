@@ -15,13 +15,13 @@
     "plume"
   ],
   "scripts": {
-    "start": "yarn workspace plume-ssr-sample start",
-    "start-server": "yarn workspace plume-ssr-sample start-server",
-    "build": "yarn workspaces foreach --from '@plume-ssr/**' run build",
-    "typescript": "yarn workspaces foreach --from '@plume-ssr/**' run typescript",
-    "eslint": "yarn workspaces foreach --from '@plume-ssr/**' run eslint",
-    "test": "yarn workspaces foreach --from '@plume-ssr/**' run test",
-    "prepare-release": "yarn workspace @plume-ssr/browser prepare-release && yarn workspace @plume-ssr/server prepare-release"
+    "start": "yarn workspace sample-plume-ssr start",
+    "start-server": "yarn workspace sample-plume-ssr start-server",
+    "build": "yarn workspaces foreach --from 'plume-ssr-**' run build",
+    "typescript": "yarn workspaces foreach --from 'plume-ssr-**' run typescript",
+    "eslint": "yarn workspaces foreach --from 'plume-ssr-**' run eslint",
+    "test": "yarn workspaces foreach --from 'plume-ssr-**' run test",
+    "prepare-release": "yarn workspace plume-ssr-browser prepare-release && yarn workspace plume-ssr-server prepare-release"
   },
   "sideEffects": false,
   "devDependencies": {

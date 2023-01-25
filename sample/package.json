@@ -1,14 +1,14 @@
 {
-  "name": "plume-ssr-sample",
+  "name": "sample-plume-ssr",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fontsource/roboto": "^4.5.8",
-    "@plume-ssr/browser": "workspace:*",
-    "@plume-ssr/server": "workspace:*",
     "dayjs": "^1.11.5",
     "micro-observables": "^1.7.2",
     "minimist": "^1.2.7",
+    "plume-ssr-browser": "workspace:*",
+    "plume-ssr-server": "workspace:*",
     "plume-ts-di": "^1.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

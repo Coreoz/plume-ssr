@@ -2,9 +2,9 @@ import { configureGlobalInjector, Injector } from 'plume-ts-di';
 import {
   CurrentHttpRequestContainer,
   installSsrModule, SsrServer,
-} from '@plume-ssr/server';
+} from 'plume-ssr-server';
 import { Logger } from 'simple-logging-system';
-import { SsrLocationContextHolder } from '@plume-ssr/browser';
+import { SsrLocationContextHolder } from 'plume-ssr-browser';
 import * as nodeUtil from 'util';
 import installApiModule from '../src/api/api-module';
 import installComponentsModule from '../src/components/components-module';

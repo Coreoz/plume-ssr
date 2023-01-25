@@ -1,7 +1,7 @@
 import { Observable, observable, WritableObservable } from 'micro-observables';
 import express from 'express';
 import { Logger } from 'simple-logging-system';
-import { SsrObservableManager } from '@plume-ssr/browser';
+import { SsrObservableManager } from 'plume-ssr-browser';
 
 /**
  * Describes an observable parameter, for instance:

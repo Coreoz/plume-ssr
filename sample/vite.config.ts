@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import { viteInlineCss } from '@plume-ssr/server';
+import { viteInlineCss } from 'plume-ssr-server';
 
 // https://vitejs.dev/config/
 export default defineConfig({

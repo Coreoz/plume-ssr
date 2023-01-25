@@ -95,10 +95,10 @@ Yarn workspaces is used. This means that:
 
 Release process
 ---------------
-- `git pull`
-- `git status`
-- `yarn prepare-release`
-- `yarn version [version to release]`
-- `yarn workspaces foreach npm publish`
-- `git push`
-- `git push --tags`
+- Check: `git pull`
+- Check: `git status`
+- Build: `yarn prepare-release`
+- Prepare version: `yarn version [version to release]`
+- Publish version on NPM: `yarn workspaces foreach --from 'plume-ssr-**' npm publish --access public --tag [version to release] --otp [otp code]`
+- Create git tag: `git tag [version to release]`
+- Push tag: `git push --tags`

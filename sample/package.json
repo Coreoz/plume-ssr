@@ -1,6 +1,6 @@
 {
   "name": "sample-plume-ssr",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "dependencies": {
     "@fontsource/roboto": "^4.5.8",

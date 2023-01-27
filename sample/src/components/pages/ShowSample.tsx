@@ -9,6 +9,6 @@ export default function ShowSample() {
   return <div>
     <p>API call success!</p>
     <p>Received data:</p>
-    <p>{sample!.name}</p>
+    <p>{sample!.data}</p>
   </div>;
 }

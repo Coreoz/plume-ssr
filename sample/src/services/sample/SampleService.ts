@@ -1,18 +1,13 @@
-import { WritableObservable } from 'micro-observables';
+import { SsrWritableObservable } from 'plume-ssr-browser';
 import SampleApi from '../../api/session/SampleApi';
-import { SsrBrowserObservableManager } from '../ssr/SsrBrowserObservableManager';
-
-export type SampleEnriched = {
-  message: string,
-  name: string,
-};
+import { SsrBrowserObservableManager, SsrObservableKey } from '../ssr/SsrBrowserObservableManager';
 
 /**
  * A sample Service that can be copied.
  * After it has been copied, this file should be deleted :)
  */
 export default class SampleService {
-  private sampleObservable: WritableObservable<SampleEnriched | undefined>;
+  private sampleObservable: SsrWritableObservable<string, SsrObservableKey>;
 
   constructor(private readonly sampleApi: SampleApi,
     observableManager: SsrBrowserObservableManager) {
@@ -24,7 +19,7 @@ export default class SampleService {
       .sampleApi
       .sample(name)
       .then((rawSample) => {
-        this.sampleObservable.set({ name, message: rawSample.name });
+        this.sampleObservable.set({ config: { pageName: name }, data: rawSample.name });
       });
   }
 

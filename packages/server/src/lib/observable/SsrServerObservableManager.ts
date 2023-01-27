@@ -1,7 +1,9 @@
-import { Observable, observable, WritableObservable } from 'micro-observables';
+import { Observable, observable } from 'micro-observables';
 import express from 'express';
 import { Logger } from 'simple-logging-system';
-import { SsrObservableManager } from 'plume-ssr-browser';
+import {
+  SsrConfigValue, SsrObservableContent, SsrObservableManager, SsrWritableObservable,
+} from 'plume-ssr-browser';
 
 const DEFAULT_CACHE_OPTIONS = {
   expireAfterWriteInMillis: undefined,
@@ -28,18 +30,13 @@ export type SsrObservableParameters<K extends string> = {
 };
 
 /**
- * A configuration value: it should be a simple type, not a full object
- */
-export type SsrConfigValue = string | number | boolean | undefined;
-
-/**
  * An observable data with its metadata.
  * The fetch timestamp will be used to optionally empty the data when they are expired.
  *
  * See {@link SsrObservableCacheOptions} for details
  */
 type SsrObservableDataValue = {
-  data: unknown,
+  data: SsrObservableContent<unknown, string>,
   lastFetchTimestamp: number
 };
 
@@ -47,12 +44,30 @@ type SsrObservableDataValue = {
  * Describes the internal structure of the observable data
  */
 type SsrObservableData<K extends string> = {
-  observable: WritableObservable<unknown>,
+  observable: SsrWritableObservable<unknown, string>,
   dependencyKeys: Set<K>,
-  currentConfigFiltered: Record<K, SsrConfigValue>,
+  currentConfig?: Record<string, SsrConfigValue>,
   latestDataByConfig: Map<string, SsrObservableDataValue>,
   cacheOptions: SsrObservableCacheOptions
 };
+
+const logger = new Logger('SsrServerObservable');
+
+/**
+ * Create a Map composite key that is comparable no matter the object properties order
+ *
+ * So for example, `makeConfigKey({a: 1, b: 2}))`
+ * will be equals to `makeConfigKey({b: 2, a: 1}))`
+ */
+export const makeConfigKey = (config: Record<string, unknown>) =>
+  // In JS, Map cannot use a composite key, to it has to be stringified
+  // eslint-disable-next-line implicit-arrow-linebreak
+  JSON.stringify(
+    config,
+    Object.keys(config)
+      // Make sure that even if the keys are in the wrong order, it matches the same key
+      .sort(),
+  );
 
 export const areRecordsEqual = (record1: Record<string, unknown>, record2: Record<string, unknown>) => {
   const keys1 = Object.keys(record1);
@@ -71,27 +86,17 @@ export const areRecordsEqual = (record1: Record<string, unknown>, record2: Recor
   return true;
 };
 
-const logger = new Logger('SsrServerObservable');
+export const isRecordPartial = (partialRecord: Record<string, unknown>, fullRecord: Record<string, unknown>) => {
+  const partialKeys = Object.keys(partialRecord);
 
-/**
- * Create a Map composite key that:
- * - Is filtered by the dependencyKeys
- * - Is comparable no matter the object properties order
- *
- * So for example, `makeConfigKey({a: 1, b: 2, c: 3}, new Set(['a', 'b']))`
- * will be equals to `makeConfigKey({d: 4, b: 2, a: 1}, new Set(['a', 'b']))`
- */
-export const makeConfigKey = (config: Record<string, unknown>, dependencyKeys: Set<string>) =>
-  // In JS, Map cannot use a composite key, to it has to be stringified
-  // eslint-disable-next-line implicit-arrow-linebreak
-  JSON.stringify(
-    config,
-    Object.keys(config)
-      // Use only keys that make sense for the observable
-      .filter((key) => dependencyKeys.has(key))
-      // Make sure that even if the keys are in the wrong order, it matches the same key
-      .sort(),
-  );
+  for (const key of partialKeys) {
+    if (partialRecord[key] !== fullRecord[key]) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 /**
  * Implements `SsrObservable` in a way observables will be updated each time
@@ -100,10 +105,10 @@ export const makeConfigKey = (config: Record<string, unknown>, dependencyKeys: S
  * This enables to cache data for SSR while making sure there will be not
  * data conflict when multiple incoming requests are handled "at the same time"
  */
-export class SsrServerObservableManager<K extends string> extends SsrObservableManager {
+export class SsrServerObservableManager<K extends string> extends SsrObservableManager<K> {
   private data: Map<string, SsrObservableData<K>>;
 
-  private currentConfig: Record<K, unknown>;
+  private currentConfig: Record<string, SsrConfigValue>;
 
   /**
    * Creates a new `SsrServerObservableManager`
@@ -114,24 +119,41 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
    * @param observableParameters The parameters of each observable in the application
    */
   constructor(
-    requestConfigKeyExtractor: (request: express.Request) => Record<K, SsrConfigValue>,
+    requestConfigKeyExtractor: (request: express.Request) => Record<string, SsrConfigValue>,
     currentHttpRequestObservable: Observable<express.Request | undefined>,
     observableParameters: SsrObservableParameters<K>[],
   ) {
     super();
-    this.currentConfig = {} as Record<K, unknown>;
+    this.currentConfig = {} as Record<string, SsrConfigValue>;
     this.data = new Map(observableParameters
       .map(SsrServerObservableManager.createObservableData)
       .map(([observableName, observableData]) => {
-        observableData.observable.subscribe((newData) => {
+        observableData.observable.readOnly().subscribe((newData) => {
+          if (!newData) {
+            return;
+          }
+          if (!Object.keys(newData.config).every((entry) => observableData.dependencyKeys.has(entry as K))) {
+            logger.error(
+              `Trying to set the config ${newData.config} to observable ${observableName}`
+              + ` Whereas the dependencies set to the observable are only ${observableData.dependencyKeys}.`
+              + ' This will surely lead to content error.',
+            );
+          }
+          // TODO Verify that the config is correctly defined in the dependencies
           // Replace the latest data value for the current config
           observableData.latestDataByConfig.set(
-            makeConfigKey(
-              this.currentConfig,
-              observableData.dependencyKeys,
-            ),
+            makeConfigKey(newData.config),
             { data: newData, lastFetchTimestamp: Date.now() },
           );
+          // Received data are actually from another config...
+          // So the current observable must be updated to undefined to match the current config
+          if (!isRecordPartial(newData.config, this.currentConfig)) {
+            logger.info(
+              'Observable config does not match current config',
+              { observableConfig: newData.config, currentConfig: this.currentConfig },
+            );
+            observableData.observable.set(undefined);
+          }
         });
         return [observableName, observableData];
       }),
@@ -144,7 +166,9 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     });
   }
 
-  override observable<T>(observableName: string): WritableObservable<T | undefined> {
+  override observable<T>(
+    observableName: string,
+  ): SsrWritableObservable<T, K> {
     let dataObservable = this.data.get(observableName)?.observable;
     if (!dataObservable) {
       logger.error(
@@ -152,9 +176,9 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
         + ' Returning a fresh observable that will not change for each request... '
         + 'This will likely lead to content error.',
       );
-      dataObservable = observable(undefined);
+      dataObservable = new SsrWritableObservable<T, K>(observable(undefined));
     }
-    return dataObservable as WritableObservable<T>;
+    return dataObservable as SsrWritableObservable<T, K>;
   }
 
   private static createObservableData<K extends string>(
@@ -163,35 +187,34 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     return [
       ssrConfiguration.name,
       {
-        observable: observable(undefined),
+        observable: new SsrWritableObservable<unknown, string>(observable(undefined)),
         dependencyKeys: new Set(ssrConfiguration.dependencyKeys),
-        currentConfigFiltered: {} as Record<K, SsrConfigValue>,
+        currentConfig: undefined,
         latestDataByConfig: new Map(),
         cacheOptions: { ...DEFAULT_CACHE_OPTIONS, ...ssrConfiguration.cacheOptions },
       },
     ];
   }
 
-  changeCurrentConfig(newConfig: Record<K, SsrConfigValue>) {
+  changeCurrentConfig(newConfig: Record<string, SsrConfigValue>) {
     // If the newConfig has not changed, no action are needed
     if (areRecordsEqual(this.currentConfig, newConfig)) {
       return;
     }
 
     this.currentConfig = newConfig;
-    const newConfigKeys = Object.keys(newConfig);
     for (const observableData of this.data.values()) {
-      const filteredNewConfig = newConfigKeys
-        .filter((key) => observableData.dependencyKeys.has(key as K))
-        .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
-          // eslint-disable-next-line no-param-reassign
-          filteredConfig[key as K] = newConfig[key as K];
-          return filteredConfig;
-        }, {} as Record<K, SsrConfigValue>);
-      if (!areRecordsEqual(filteredNewConfig, observableData.currentConfigFiltered)) {
-        const observableDataKey = makeConfigKey(this.currentConfig, observableData.dependencyKeys);
+      if (!observableData.currentConfig || !isRecordPartial(observableData.currentConfig, newConfig)) {
+        const filteredNewConfig = Object.keys(newConfig)
+          .filter((key) => observableData.dependencyKeys.has(key as K))
+          .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
+            // eslint-disable-next-line no-param-reassign
+            filteredConfig[key as K] = newConfig[key as K];
+            return filteredConfig;
+          }, {} as Record<K, SsrConfigValue>);
+        const observableDataKey = makeConfigKey(filteredNewConfig);
         observableData.observable.set(observableData.latestDataByConfig.get(observableDataKey)?.data);
-        observableData.currentConfigFiltered = filteredNewConfig;
+        observableData.currentConfig = filteredNewConfig;
       }
     }
   }
@@ -218,9 +241,7 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     const printableData = Array.from(this.data.entries()).map(([observableKey, observableData]) => [
       observableKey,
       {
-        currentValue: observableData.observable.get(),
-        dependencyKeys: Array.from(observableData.dependencyKeys.values()),
-        currentConfigFiltered: observableData.currentConfigFiltered,
+        currentValue: observableData.observable.readOnly().get(),
         latestDataByConfig: Array.from(observableData.latestDataByConfig.entries()),
       },
     ]);

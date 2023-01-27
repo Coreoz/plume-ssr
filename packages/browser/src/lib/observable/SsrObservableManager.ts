@@ -1,5 +1,5 @@
-import { WritableObservable } from 'micro-observables';
+import { SsrWritableObservable } from './SsrWritableObservable';
 
-export abstract class SsrObservableManager {
-  abstract observable<T>(observableName: string): WritableObservable<T | undefined>;
+export abstract class SsrObservableManager<K extends string> {
+  abstract observable<T>(observableName: string): SsrWritableObservable<T, K>;
 }

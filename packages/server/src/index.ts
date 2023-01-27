@@ -29,4 +29,4 @@ export { viteInlineCss } from './lib/build/vite.inline-css';
 export { filterImportsPlugin } from './lib/build/esbuild.filter-imports';
 // observable
 export { SsrServerObservableManager } from './lib/observable/SsrServerObservableManager';
-export type { SsrObservableParameters, SsrConfigValue } from './lib/observable/SsrServerObservableManager';
+export type { SsrObservableParameters } from './lib/observable/SsrServerObservableManager';

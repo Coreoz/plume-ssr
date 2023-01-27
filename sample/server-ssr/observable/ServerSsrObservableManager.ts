@@ -1,7 +1,11 @@
-import { WritableObservable } from 'micro-observables';
 import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
 import express from 'express';
-import { SsrBrowserObservableManager, SsrObservableKey } from '../../src/services/ssr/SsrBrowserObservableManager';
+import { SsrWritableObservable } from 'plume-ssr-browser';
+import {
+  SsrBrowserObservableManager,
+  SsrObservableKey,
+  SsrObservableName,
+} from '../../src/services/ssr/SsrBrowserObservableManager';
 import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';
 import { routeNameOrDefault } from '../../src/components/pages/Home';
 
@@ -30,7 +34,7 @@ export default class ServerSsrObservableManager extends SsrBrowserObservableMana
     );
   }
 
-  override observable<T>(observableName: string): WritableObservable<T | undefined> {
+  override observable<T>(observableName: SsrObservableName): SsrWritableObservable<T, SsrObservableKey> {
     return this.ssrObservableManager.observable(observableName);
   }
 

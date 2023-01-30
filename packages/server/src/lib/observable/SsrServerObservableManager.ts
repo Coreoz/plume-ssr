@@ -139,7 +139,6 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
               + ' This will surely lead to content error.',
             );
           }
-          // TODO Verify that the config is correctly defined in the dependencies
           // Replace the latest data value for the current config
           observableData.latestDataByConfig.set(
             makeConfigKey(newData.config),

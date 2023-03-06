@@ -2,27 +2,66 @@ Plume SSR
 =========
 A toolkit to facilitate setting up SSR in a frontend project.
 
+---
+
+. **[Overview](#overview)** .
+**[Features](#features)** .
+**[Dependencies](#dependencies)** .
+**[Getting started](#getting-started)** .
+
+---
+
+Overview
+---------------
+Server-side rendering (SSR) is a popular technique for rendering a client-side single page application (SPA) on the server and then sending a fully rendered page to the client. This allows for dynamic components to be served as static HTML markup.
+
+This approach can be useful for search engine optimization (SEO) when indexing does not handle JavaScript properly. It may also be beneficial in situations where downloading a large JavaScript bundle is impaired by a slow network.
+
+**This is when Plume-SSR can help you!**
+
+Plume-SSR creates an Express http server when running in a NodeJs environment.
+When a request is received, the Express server will pre-render your application and serve it as a static html file.
+
+Plume-SSR will then hydrate the received html with your React application on the client side.
+
+
+Features
+---------------
+- Multisite application
+- Management of redirections with the response code `301`
+- Server side observables management with the `SsrServerObservableManager`
+
+
+Dependencies
+---------------
+- **React :** Application
+- **Express :** Http Server
+- **Plume-ts-di :** Dependency injection
+- **Micro-observables :** State management
+- **Simple-http-rest-client :** Rest API client
+
+
 Getting started
 ---------------
 1. Add dependencies:
-   1. `yarn add plume-ssr-server`
-   2. `yarn add -D express @types/express esbuild esbuild-runner`
+    1. `yarn add plume-ssr-server`
+    2. `yarn add -D express @types/express esbuild esbuild-runner`
 2. Create a `building` folder to put `di-transformer-adapter.ts` and `ssr-compiler.ts`
 3. Modify `tsconfig.json` to change:
-   1. the `di-transformer-adapter.ts` path: `{"transform": "./building/di-transformer-adapter.ts" },`
-   2. Add `"server-ssr/index.ts",` in the `include` section
+    1. the `di-transformer-adapter.ts` path: `{"transform": "./building/di-transformer-adapter.ts" },`
+    2. Add `"server-ssr/index.ts",` in the `include` section
 4. Create source folder for ssr server: `mkdir server-ssr`
 5. Change eslint ts config: add include `"server-ssr"`
 6. Create the SSR module: `server-module.ts`
-   1. Register the config module: `injector.registerSingleton(ConfigProvider, SsrConfigProvider);`
+    1. Register the config module: `injector.registerSingleton(ConfigProvider, SsrConfigProvider);`
 7. Optionally, if the SSR module will need to read specific file configuration to start, create a folder `config` and a file `Config.ts`
 8. Modify `scripts` in the `package.json` file:
-   1. Add `"run-ssr": "ttsc --incremental && yarn build-server && node build/server/index.js",`
-   2. Add `"start-server": "concurrently \"yarn watch-ts\" \"yarn run-ssr\"",`
-   3. Delete `"build": "rm -rf build && yarn build-client && yarn build-server",`
-   4. Add `"build-client": "vite build --outDir build/client",`
-   5. Add `"build-server": "esr building/ssr-compiler.ts",`
-   6. Add `"build": "rm -rf build && ttsc && yarn build-client && run build-server",`
+    1. Add `"run-ssr": "ttsc --incremental && yarn build-server && node build/server/index.js",`
+    2. Add `"start-server": "concurrently \"yarn watch-ts\" \"yarn run-ssr\"",`
+    3. Delete `"build": "rm -rf build && yarn build-client && yarn build-server",`
+    4. Add `"build-client": "vite build --outDir build/client",`
+    5. Add `"build-server": "esr building/ssr-compiler.ts",`
+    6. Add `"build": "rm -rf build && ttsc && yarn build-client && run build-server",`
 9. Create a `conf-ssr.json` file
 10. Update `vite.config.ts` config to add `viteInlineCss` plugin
 11. Change `index.html` file, import module `/ts-built/src/index.js` instead of `/ts-built/index.js`
@@ -71,20 +110,26 @@ Getting started
   ],
 }],
 ```
+14. Add the observables cleaning task to the scheduler :
+    @`SsrServerObservableManager.clearExpiredObservableData(Date.now())`
 
-## React router
-@TODO
+React router
+-------------
+Wrapper providing the location context to the SSR application.
+
+When using React Router v6, it allows to reproduce the context provided
+by the {@link StaticRouter} of React Router v5, a feature that no longer exists in React Router v6.
+
+SsrLocationContextProvider is primarily used to detect redirects during SSR rendering of the application
+by updating the {@link SsrLocationContext} when a redirect is triggered.
+
+When a redirect is detected, a 304 response containing the new URL should be sent to the user's browser.
 
 
- Wrapper providing the location context to the SSR application.
+### @TODO
+- Logs gérés "tous seuls"
+- Config à intégrer en mode delegate avec la config du projet qui implémente le système
 
- When using React Router v6, it allows to reproduce the context provided
- by the {@link StaticRouter} of React Router v5, a feature that no longer exists in React Router v6.
-
- SsrLocationContextProvider is primarily used to detect redirects during SSR rendering of the application
- by updating the {@link SsrLocationContext} when a redirect is triggered.
-
- When a redirect is detected, a 304 response containing the new URL should be sent to the user's browser.
 
 Contributing
 ------------

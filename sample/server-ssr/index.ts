@@ -1,7 +1,7 @@
 import { configureGlobalInjector, Injector } from 'plume-ts-di';
 import {
   CurrentHttpRequestContainer,
-  installSsrModule, SsrServer,
+  installSsrModule, ServerLogger, SsrServer,
 } from 'plume-ssr-server';
 import { Logger } from 'simple-logging-system';
 import { SsrLocationContextHolder } from 'plume-ssr-browser';
@@ -30,6 +30,9 @@ installApiModule(injector);
 installI18nModule(injector);
 installSsrModule(injector);
 installServerModule(injector);
+
+// configure logging for server
+injector.getInstance(ServerLogger).setupServerLogs();
 
 injector.initializeSingletonInstances();
 

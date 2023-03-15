@@ -1,6 +1,8 @@
 import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
 import express from 'express';
 import { SsrWritableObservable } from 'plume-ssr-browser';
+import { Scheduler } from 'simple-job-scheduler';
+import { dayjs } from 'dayjs';
 import {
   SsrBrowserObservableManager,
   SsrObservableKey,
@@ -25,12 +27,22 @@ const observables: SsrObservableParameters<SsrObservableKey>[] = [
 export default class ServerSsrObservableManager extends SsrBrowserObservableManager {
   private readonly ssrObservableManager: SsrServerObservableManager<SsrObservableKey>;
 
-  constructor(currentHttpRequestContainer: CurrentHttpRequestContainer, localeResolver: LocaleResolver) {
+  constructor(
+    currentHttpRequestContainer: CurrentHttpRequestContainer,
+    localeResolver: LocaleResolver,
+    scheduler: Scheduler,
+  ) {
     super();
     this.ssrObservableManager = new SsrServerObservableManager(
       requestKeysExtractor(localeResolver),
       currentHttpRequestContainer.getCurrentHttpRequest(),
       observables,
+    );
+    scheduler.schedule(
+      'clean observable cache',
+      () => this.ssrObservableManager.clearExpiredObservableData(dayjs().millisecond()),
+      // every minute
+      60000,
     );
   }
 

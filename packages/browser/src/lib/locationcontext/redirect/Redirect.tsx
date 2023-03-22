@@ -1,4 +1,4 @@
-import { redirect as reactRouterredirect } from 'react-router-dom';
+import { redirect as reactRouterRedirect } from 'react-router-dom';
 import { useUpdateLocationContext } from '../hook';
 
 /**
@@ -9,6 +9,7 @@ import { useUpdateLocationContext } from '../hook';
  * The update of the SsrLocationContext allows to manage the redirection on the SSR side.
  */
 export function redirect(url: string, init?: number | ResponseInit) {
-  useUpdateLocationContext(url);
-  return reactRouterredirect(url, init);
+  const { setContextRedirectUrl } = useUpdateLocationContext();
+  setContextRedirectUrl(url);
+  return reactRouterRedirect(url, init);
 }

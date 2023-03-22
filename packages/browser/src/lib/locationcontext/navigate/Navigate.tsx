@@ -17,9 +17,14 @@ import { useUpdateLocationContext } from '../hook';
 export function Navigate({
   to, replace, state, relative,
 }: NavigateProps) {
-  useUpdateLocationContext(to);
-  return <ReactRouterNavigate to={to} replace={replace} state={state}
-                              relative={relative} />;
+  const { setContextRedirectUrl } = useUpdateLocationContext();
+  setContextRedirectUrl(to);
+  return <ReactRouterNavigate
+    to={to}
+    replace={replace}
+    state={state}
+    relative={relative}
+  />;
 }
 
 /**
@@ -30,9 +35,17 @@ export function Navigate({
  */
 export function useNavigate() {
   const navigate = useReactRouterNavigate();
+  const { setContextRedirectUrl } = useUpdateLocationContext();
 
-  return (to: string | To, options?: { replace?: boolean; state?: unknown; relative?: RelativeRoutingType; }) => {
-    useUpdateLocationContext(to);
+  return (
+    to: string | To,
+    options?: {
+      replace?: boolean,
+      state?: unknown,
+      relative?: RelativeRoutingType,
+    },
+  ) => {
+    setContextRedirectUrl(to);
     navigate(to, options);
   };
 }

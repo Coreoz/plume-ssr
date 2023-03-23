@@ -8,7 +8,7 @@ import {
 
 export type UpdateLocationContextHook = {
   setContextRedirectUrl: (newUrl: string | To) => void,
-}
+};
 
 /**
  * Updating the SsrLocationContext.
@@ -24,6 +24,6 @@ export function useUpdateLocationContext(): UpdateLocationContextHook {
           ? newUrl
           : `${newUrl.pathname}${newUrl.search ?? ''}${newUrl.hash ?? ''}`;
       }
-    }
-  }
+    },
+  };
 }

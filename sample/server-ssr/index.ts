@@ -5,6 +5,7 @@ import {
 } from 'plume-ssr-server';
 import { Logger } from 'simple-logging-system';
 import { SsrLocationContextHolder } from 'plume-ssr-browser';
+import { Scheduler } from 'simple-job-scheduler';
 import * as nodeUtil from 'util';
 import installApiModule from '../src/api/api-module';
 import installComponentsModule from '../src/components/components-module';
@@ -13,6 +14,7 @@ import LocaleService from '../src/i18n/locale/LocaleService';
 import initializeLocalizedDate from '../src/i18n/messages/LocalizedDate';
 import installServicesModule from '../src/services/services-module';
 import { ConfigProvider } from './config/ConfigProvider';
+import ServerSsrObservableManager from './observable/ServerSsrObservableManager';
 import ssrRequestHandler from './requestHandler/SsrRequestHandler';
 import installServerModule from './server-module';
 import HttpPromiseMonitor from '../src/api/HttpPromiseMonitor';
@@ -42,6 +44,14 @@ configureGlobalInjector(injector);
 initializeLocalizedDate(injector.getInstance(LocaleService));
 
 const config = injector.getInstance(ConfigProvider).getSsrBaseConfig();
+
+const scheduler = injector.getInstance(Scheduler);
+scheduler.schedule(
+  'clean observable cache',
+  () => injector.getInstance(ServerSsrObservableManager).clearExpiredObservableData(Date.now()),
+  // every minute
+  60000,
+);
 
 injector.getInstance(SsrServer)
   .createExpressServer(ssrRequestHandler(

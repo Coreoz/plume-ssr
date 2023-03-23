@@ -1,13 +1,13 @@
-import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
 import express from 'express';
 import { SsrWritableObservable } from 'plume-ssr-browser';
+import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
+import { routeNameOrDefault } from '../../src/components/pages/Home';
+import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';
 import {
   SsrBrowserObservableManager,
   SsrObservableKey,
   SsrObservableName,
 } from '../../src/services/ssr/SsrBrowserObservableManager';
-import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';
-import { routeNameOrDefault } from '../../src/components/pages/Home';
 
 export const requestKeysExtractor = (localeResolver: LocaleResolver) => (request: express.Request) => ({
   lang: localeResolver.resolve().code,
@@ -25,7 +25,10 @@ const observables: SsrObservableParameters<SsrObservableKey>[] = [
 export default class ServerSsrObservableManager extends SsrBrowserObservableManager {
   private readonly ssrObservableManager: SsrServerObservableManager<SsrObservableKey>;
 
-  constructor(currentHttpRequestContainer: CurrentHttpRequestContainer, localeResolver: LocaleResolver) {
+  constructor(
+    currentHttpRequestContainer: CurrentHttpRequestContainer,
+    localeResolver: LocaleResolver,
+  ) {
     super();
     this.ssrObservableManager = new SsrServerObservableManager(
       requestKeysExtractor(localeResolver),
@@ -36,6 +39,10 @@ export default class ServerSsrObservableManager extends SsrBrowserObservableMana
 
   override observable<T>(observableName: SsrObservableName): SsrWritableObservable<T, SsrObservableKey> {
     return this.ssrObservableManager.observable(observableName);
+  }
+
+  clearExpiredObservableData(currentTimestamp: number) {
+    return this.ssrObservableManager.clearExpiredObservableData(currentTimestamp);
   }
 
   logData() {

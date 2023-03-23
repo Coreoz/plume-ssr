@@ -1,15 +1,13 @@
-import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
 import express from 'express';
 import { SsrWritableObservable } from 'plume-ssr-browser';
-import { Scheduler } from 'simple-job-scheduler';
-import { dayjs } from 'dayjs';
+import { CurrentHttpRequestContainer, SsrObservableParameters, SsrServerObservableManager } from 'plume-ssr-server';
+import { routeNameOrDefault } from '../../src/components/pages/Home';
+import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';
 import {
   SsrBrowserObservableManager,
   SsrObservableKey,
   SsrObservableName,
 } from '../../src/services/ssr/SsrBrowserObservableManager';
-import { LocaleResolver } from '../../src/lib/locale-resolver/LocaleResolver';
-import { routeNameOrDefault } from '../../src/components/pages/Home';
 
 export const requestKeysExtractor = (localeResolver: LocaleResolver) => (request: express.Request) => ({
   lang: localeResolver.resolve().code,
@@ -30,7 +28,6 @@ export default class ServerSsrObservableManager extends SsrBrowserObservableMana
   constructor(
     currentHttpRequestContainer: CurrentHttpRequestContainer,
     localeResolver: LocaleResolver,
-    scheduler: Scheduler,
   ) {
     super();
     this.ssrObservableManager = new SsrServerObservableManager(
@@ -38,16 +35,14 @@ export default class ServerSsrObservableManager extends SsrBrowserObservableMana
       currentHttpRequestContainer.getCurrentHttpRequest(),
       observables,
     );
-    scheduler.schedule(
-      'clean observable cache',
-      () => this.ssrObservableManager.clearExpiredObservableData(dayjs().millisecond()),
-      // every minute
-      60000,
-    );
   }
 
   override observable<T>(observableName: SsrObservableName): SsrWritableObservable<T, SsrObservableKey> {
     return this.ssrObservableManager.observable(observableName);
+  }
+
+  clearExpiredObservableData(currentTimestamp: number) {
+    return this.ssrObservableManager.clearExpiredObservableData(currentTimestamp);
   }
 
   logData() {

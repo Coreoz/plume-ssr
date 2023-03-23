@@ -86,6 +86,33 @@ Getting started
 
  When a redirect is detected, a 304 response containing the new URL should be sent to the user's browser.
 
+Observable data management
+--------------------------
+Observable data for SSR enables to:
+- Serve cached page in SSR without having to make further API calls for each incoming request
+- Parametrize this cache, for example by lang, by site, by page, etc.
+
+When defining observable data, it is **very important** to correctly identity all the parameters that may change the data value. For example:
+- Configuration: Does it depend on the current site (i.e. hostname)? The lang?
+- PageData: Does it depend on the current site? The lang? The current page id? Some kind of category?
+
+TODO details more
+- Configure the project global `SsrObservableManager`
+- Defines observable in the project using `SsrWritableObservable`
+- Set observable values using `SsrObservableContent`
+- Use the `SsrWritableObservable.data()` method to access the observable data
+- Use the hook `useSsrObservableLoader` to access data in components in conjunction with the loading component `WithLoadingData`
+- Configure the SSR observable manager using `SsrServerObservableManager`
+
+Examples in the sample project: `SsrBrowserObservableManager`, `SampleService`, `Home.tsx`, `ShowSample.tsx`, `ServerSsrObservableManager.ts`
+
+TODO how to debug this? It would be good to be able in `ServerSsrObservableManager` to wrap returned observable, so each time the method `Observable.get()` is called, the current observable config is logged with the current observable value (with a limit of one per request). This would enable to detect:
+- If an observable is configured using the ssr one: it would not be logged whereas it should
+- If the configuration is wrongly computed: if for instance the lang `en` is detected instead of `fr`
+- If the observable value is wrong for the configuration: it can either show an error in the observable value fetching or if a configuration parameter is missing
+
+TODO show an example with how the hostname configuration should be used
+
 Contributing
 ------------
 Yarn workspaces is used. This means that:

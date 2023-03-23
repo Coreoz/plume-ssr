@@ -7,6 +7,12 @@ export type SsrConfigValue = string | number | boolean | undefined;
 
 /**
  * The content SSR compatible stored in SSR compatible observable
+ *
+ * `T` The type of the observable data
+ *
+ * `K` The name of the observable, the type should be a string union type.
+ * This helps avoid mistakes: the name of the observable will be constrained to be
+ * in this union type that will also be used for the observable configuration in the SSR part.
  */
 export type SsrObservableContent<T, K extends string> = {
   /**

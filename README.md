@@ -72,7 +72,7 @@ Getting started
 }],
 ```
 
-TODO when #4 is resolved, add the missing rule
+TODO when [#4](/../../issues/4) is resolved, add the missing rule
 
 ## React router
 @TODO
@@ -108,7 +108,7 @@ TODO details more
 
 Examples in the sample project: `SsrBrowserObservableManager`, `SampleService`, `Home.tsx`, `ShowSample.tsx`, `ServerSsrObservableManager.ts`
 
-TODO debug config: see #3
+TODO debug config: see [#3](/../../issues/3)
 
 TODO show an example with how the hostname configuration should be used
 

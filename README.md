@@ -72,6 +72,8 @@ Getting started
 }],
 ```
 
+TODO when #4 is resolved, add the missing rule
+
 ## React router
 @TODO
 
@@ -106,10 +108,7 @@ TODO details more
 
 Examples in the sample project: `SsrBrowserObservableManager`, `SampleService`, `Home.tsx`, `ShowSample.tsx`, `ServerSsrObservableManager.ts`
 
-TODO how to debug this? It would be good to be able in `ServerSsrObservableManager` to wrap returned observable, so each time the method `Observable.get()` is called, the current observable config is logged with the current observable value (with a limit of one per request). This would enable to detect:
-- If an observable is configured using the ssr one: it would not be logged whereas it should
-- If the configuration is wrongly computed: if for instance the lang `en` is detected instead of `fr`
-- If the observable value is wrong for the configuration: it can either show an error in the observable value fetching or if a configuration parameter is missing
+TODO debug config: see #3
 
 TODO show an example with how the hostname configuration should be used
 

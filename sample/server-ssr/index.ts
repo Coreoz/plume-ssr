@@ -47,7 +47,7 @@ const config = injector.getInstance(ConfigProvider).getSsrBaseConfig();
 
 const scheduler = injector.getInstance(Scheduler);
 scheduler.schedule(
-  'clean observable cache',
+  'Clean SSR observable cache',
   () => injector.getInstance(ServerSsrObservableManager).clearExpiredObservableData(Date.now()),
   // every minute
   60000,

@@ -122,13 +122,21 @@ describe('Tests SsrServerObservableManager', () => {
     observableManager.changeCurrentConfig({ lang: 'fr', page: 'home', siteId: 'abc' });
     expect(pageHeaderObservable.readOnly().get()).toBeUndefined();
   });
-  test('Verify that config change and observable data are independant', () => {
+  test('Verify that config change and observable data are independent', () => {
     const observableManager = newSsrServerObservableManager();
     const pageHeaderObservable = observableManager.observable('page-header');
     observableManager.changeCurrentConfig({ lang: 'fr', page: 'home', siteId: 'abc' });
     pageHeaderObservable.set(makeData('enHomeAbc', 'en', 'home'));
     expect(pageHeaderObservable.readOnly().get()).toBeUndefined();
     observableManager.changeCurrentConfig({ lang: 'en', page: 'home', siteId: 'abc' });
+    expect(pageHeaderObservable.data().get()).toStrictEqual('enHomeAbc');
+  });
+  test('Verify that config change observable data for wrong config does not override existing data', () => {
+    const observableManager = newSsrServerObservableManager();
+    const pageHeaderObservable = observableManager.observable('page-header');
+    observableManager.changeCurrentConfig({ lang: 'en', page: 'home', siteId: 'abc' });
+    pageHeaderObservable.set(makeData('enHomeAbc', 'en', 'home'));
+    pageHeaderObservable.set(makeData('frHomeAbc', 'fr', 'home'));
     expect(pageHeaderObservable.data().get()).toStrictEqual('enHomeAbc');
   });
 });

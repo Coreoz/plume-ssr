@@ -69,6 +69,16 @@ export const makeConfigKey = (config: Record<string, unknown>) =>
       .sort(),
   );
 
+const filterConfig = <K extends string>(
+  config: Record<K, SsrConfigValue>, dependencyKeys: Set<K>,
+): Record<K, SsrConfigValue> => Object.keys(config)
+    .filter((key) => dependencyKeys.has(key as K))
+    .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
+    // eslint-disable-next-line no-param-reassign
+      filteredConfig[key as K] = config[key as K];
+      return filteredConfig;
+    }, {} as Record<K, SsrConfigValue>);
+
 export const areRecordsEqual = (record1: Record<string, unknown>, record2: Record<string, unknown>) => {
   const keys1 = Object.keys(record1);
   const keys2 = Object.keys(record2);
@@ -148,10 +158,14 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
           // So the current observable must be updated to undefined to match the current config
           if (!isRecordPartial(newData.config, this.currentConfig)) {
             logger.info(
-              'Observable config does not match current config',
+              'Observable config does not match current config (data received after the config changed?)',
               { observableConfig: newData.config, currentConfig: this.currentConfig },
             );
-            observableData.observable.set(undefined);
+            observableData.observable.set(
+              observableData.latestDataByConfig.get(
+                makeConfigKey(filterConfig(this.currentConfig, observableData.dependencyKeys)),
+              )?.data,
+            );
           }
         });
         return [observableName, observableData];
@@ -195,7 +209,7 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     ];
   }
 
-  changeCurrentConfig(newConfig: Record<string, SsrConfigValue>) {
+  changeCurrentConfig(newConfig: Record<K, SsrConfigValue>) {
     // If the newConfig has not changed, no action are needed
     if (areRecordsEqual(this.currentConfig, newConfig)) {
       return;
@@ -204,13 +218,7 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     this.currentConfig = newConfig;
     for (const observableData of this.data.values()) {
       if (!observableData.currentConfig || !isRecordPartial(observableData.currentConfig, newConfig)) {
-        const filteredNewConfig = Object.keys(newConfig)
-          .filter((key) => observableData.dependencyKeys.has(key as K))
-          .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
-            // eslint-disable-next-line no-param-reassign
-            filteredConfig[key as K] = newConfig[key as K];
-            return filteredConfig;
-          }, {} as Record<K, SsrConfigValue>);
+        const filteredNewConfig = filterConfig(newConfig, observableData.dependencyKeys);
         const observableDataKey = makeConfigKey(filteredNewConfig);
         observableData.observable.set(observableData.latestDataByConfig.get(observableDataKey)?.data);
         observableData.currentConfig = filteredNewConfig;
@@ -223,7 +231,7 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
    *
    * @param currentTimestamp timestamp used to determine if the value of the observable is outdated
    */
-  public clearExpiredObservableData = (currentTimestamp: number) => {
+  clearExpiredObservableData = (currentTimestamp: number) => {
     for (const observableData of this.data.values()) {
       if (observableData.cacheOptions.expireAfterWriteInMillis) {
         for (const [configKey, lastData] of observableData.latestDataByConfig.entries()) {

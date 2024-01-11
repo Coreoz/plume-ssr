@@ -45,6 +45,7 @@ export class Files {
   /**
    * Permet de créer un dossier selon un relativePath
    */
+  // eslint-disable-next-line class-methods-use-this
   createFolder(relativePath: string): void {
     if (!fs.existsSync(relativePath)) {
       fs.mkdirSync(relativePath);

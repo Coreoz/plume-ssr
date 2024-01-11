@@ -41,4 +41,13 @@ export class Files {
       callback,
     );
   }
+
+  /**
+   * Permet de créer un dossier selon un relativePath
+   */
+  createFolder(relativePath: string): void {
+    if (!fs.existsSync(relativePath)) {
+      fs.mkdirSync(relativePath);
+    }
+  }
 }

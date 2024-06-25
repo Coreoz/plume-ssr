@@ -9,9 +9,12 @@ import { SsrLocationContext, SsrLocationContextHolder } from 'plume-ssr-browser'
 import ReactDOMServer from 'react-dom/server';
 import { createMemoryRouter } from 'react-router-dom';
 import App from '../../src/components/App';
+import ServerSsrObservableManager from '../observable/ServerSsrObservableManager';
 
 function createAppRenderer(
-  currentHttpRequest: CurrentHttpRequestContainer, ssrLocationContextHolder: SsrLocationContextHolder,
+  currentHttpRequest: CurrentHttpRequestContainer,
+  ssrLocationContextHolder: SsrLocationContextHolder,
+  observableManager: ServerSsrObservableManager,
 ): ApplicationHtmlRenderer<RenderedApplication> {
   return (request: express.Request) => {
     // initialize the data related to the http request
@@ -30,8 +33,9 @@ function createAppRenderer(
         })} />
       </ssrLocationContext.Provider>,
     );
+    const appData = `window.observableData = ${JSON.stringify(observableManager.dumpData())}`;
 
-    return { appHtml, redirectUrl: context.redirectUrl ?? '' };
+    return { appData, appHtml, redirectUrl: context.redirectUrl ?? '' };
   };
 }
 

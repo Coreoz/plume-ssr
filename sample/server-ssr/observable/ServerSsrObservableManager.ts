@@ -45,6 +45,10 @@ export default class ServerSsrObservableManager extends SsrBrowserObservableMana
     return this.ssrObservableManager.clearExpiredObservableData(currentTimestamp);
   }
 
+  dumpData() {
+    return this.ssrObservableManager.dumpData();
+  }
+
   logData() {
     this.ssrObservableManager.logData();
   }

@@ -1,24 +1,5 @@
 import { hydrateRoot } from 'react-dom/client';
 import * as ReactDOM from 'react-dom/client';
-import { PromiseMonitor } from 'simple-http-rest-client';
-import { Logger } from 'simple-logging-system';
-import { hydrationWrapper } from './HydrationWrapper';
-
-/**
- * Options passed to the renderApplication function to configure the application hydration.
- *
- * Warning: The options used should be exactly the same used to render the SsrApplication,
- * otherwise the hydration may fail.
- *
- * @property {number} maxRender Maximum number of renderings to perform
- * before replacing the Html retrieved from the SSR Server with the application
- * if the promises are still not resolved.
- */
-export interface BrowserRenderOption {
-  maxRender: number,
-}
-
-const logger = new Logger('RenderBrowserApplication');
 
 /**
  * Render the application by hydrating the html received from the SSR Server.
@@ -36,102 +17,19 @@ const logger = new Logger('RenderBrowserApplication');
  *
  * @param reactApp React application to render
  * @param rootElementId Id of the HTML element in which the application will be mounted.
- * @param promiseMonitors Array of promise monitors that maintains a state of all the application promises
- * that are being executed and that have an impact on the rendering of the application
- * @param [option={maxRender:10}] - used to configure the application rendering
  */
 export async function renderBrowserApplication(
   reactApp: JSX.Element,
   rootElementId: string = 'root',
-  promiseMonitors: PromiseMonitor[] = [],
-  option: BrowserRenderOption = {
-    maxRender: 10,
-  },
 ) {
-  const currentMillis = Date.now();
   const rootDomElement = document.getElementById(rootElementId);
   if (rootDomElement === null) {
     throw new Error(`HTML error: there is no element with id "${rootElementId}"`);
   }
 
   if (rootDomElement.children.length > 0) {
-    try {
-      const unMountDummyApp = await renderDummyApp(reactApp);
-      await prepareApplicationForHydration(promiseMonitors, option);
-      unMountDummyApp();
-      logger.info('All pending promises has been resolved, hydrating the received Html with the app...');
-      hydrateRoot(rootDomElement, reactApp);
-      logger.info(`DOM hydrated in ${Date.now() - currentMillis}ms`);
-      return;
-    } catch {
-      logger.error('DOM hydration failed, rendering app instead');
-    }
+    hydrateRoot(rootDomElement, reactApp);
+  } else {
+    ReactDOM.createRoot(rootDomElement).render(reactApp);
   }
-
-  ReactDOM.createRoot(rootDomElement).render(reactApp);
-  logger.info(`DOM rendered in ${Date.now() - currentMillis}ms`);
-}
-
-function renderDummyApp(reactApp: JSX.Element) {
-  // Try to re-render the application while there are pending Promises
-  const dummyDiv = document.createElement('div');
-  const dummyRoot = ReactDOM.createRoot(dummyDiv);
-
-  return new Promise<() => void>((resolve) => {
-    const onAppMounted = () => resolve(() => dummyRoot.unmount());
-    dummyRoot.render(hydrationWrapper(onAppMounted, reactApp));
-  });
-}
-
-/**
- * Extract context data from an array promiseMonitors.
- * It is useful especially for logging reasons.
- * @param promiseMonitors The promise monitors array
- */
-export const extractMonitorContextData = (promiseMonitors: PromiseMonitor[]) => promiseMonitors
-  .flatMap((promiseMonitor) => promiseMonitor
-    .getRunningPromisesWithInfo()
-    .map((runningPromise) => runningPromise[1].promiseInfo),
-  );
-
-/**
- * Render the application in a dummy Html element until all the data promises are resolved,
- *
- * @param promiseMonitors
- * @param hydrationOption
- * @returns Promise resolved if all promises have been resolved,
- * Promise rejected if some promises are still pending after the maximum number of returns is reached.
- */
-async function prepareApplicationForHydration(
-  promiseMonitors: PromiseMonitor[],
-  hydrationOption: BrowserRenderOption,
-) {
-  const { maxRender } = hydrationOption;
-
-  for (let i = 0; i < maxRender; i += 1) {
-    // attend un cycle supplémentaire pour vérifier que React n'est pas en train de monter des modules dynamiques
-    // eslint-disable-next-line no-await-in-loop
-    await new Promise(
-      // eslint-disable-next-line no-promise-executor-return
-      (resolve) => setTimeout(resolve, 0),
-    );
-
-    if (promiseMonitors.every((promiseMonitor) => promiseMonitor.getRunningPromisesCount() === 0)) {
-      return Promise.resolve();
-    }
-
-    logger.info('There are Promises whose resolution is necessary to the hydration, waiting for their resolution...', {
-      promiseMonitors: extractMonitorContextData(promiseMonitors),
-    });
-
-    // eslint-disable-next-line no-await-in-loop
-    await Promise.allSettled(promiseMonitors.flatMap((promiseMonitor) => promiseMonitor.getRunningPromises()));
-
-    logger.info('Re-render the React application now that the Promises have been resolved');
-  }
-
-  logger.warn(`There are still unresolved promises after ${maxRender} iterations`, {
-    promiseMonitors: extractMonitorContextData(promiseMonitors),
-  });
-  return Promise.reject();
 }

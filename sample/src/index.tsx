@@ -1,10 +1,9 @@
 import React from 'react';
 import 'micro-observables/batchingForReactDom';
-import { createBrowserRouter } from 'react-router-dom';
-import { configureGlobalInjector, getGlobalInstance, Injector } from 'plume-ts-di';
+import {createBrowserRouter} from 'react-router-dom';
+import {configureGlobalInjector, Injector} from 'plume-ts-di';
 import './polyfill-loader';
-import { renderBrowserApplication } from 'plume-ssr-browser';
-import HttpPromiseMonitor from './api/HttpPromiseMonitor';
+import {renderBrowserApplication} from 'plume-ssr-browser';
 import installServicesModule from './services/services-module';
 import installComponentsModule from './components/components-module';
 import App from './components/App';
@@ -32,4 +31,4 @@ const reactApp = (
   </React.StrictMode>
 );
 
-renderBrowserApplication(reactApp, 'root', [getGlobalInstance(HttpPromiseMonitor)]);
+renderBrowserApplication(reactApp, 'root');

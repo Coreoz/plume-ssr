@@ -9,7 +9,6 @@ export { SsrLocationContextHolder } from './lib/locationcontext/SsrLocationConte
 export { redirect } from './lib/locationcontext/redirect/Redirect';
 export { Navigate, useNavigate } from './lib/locationcontext/navigate/Navigate';
 
-export type { BrowserRenderOption } from './lib/renderer/BrowserApplicationRenderer';
-export { renderBrowserApplication, extractMonitorContextData } from './lib/renderer/BrowserApplicationRenderer';
+export { renderBrowserApplication } from './lib/renderer/BrowserApplicationRenderer';
 
 export { installRectPlumeSsrFrontendModule } from './lib/module/reactPlumeSsrFrontend-module';

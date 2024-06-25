@@ -244,6 +244,16 @@ export class SsrServerObservableManager<K extends string> extends SsrObservableM
     }
   };
 
+  dumpData() {
+    return Object.fromEntries(Array.from(this.data.entries()).map(([observableKey, observableData]) => [
+      observableKey,
+      {
+        config: filterConfig(this.currentConfig, observableData.dependencyKeys),
+        data: observableData.observable.readOnly().get()?.data,
+      },
+    ]));
+  }
+
   logData() {
     const printableData = Array.from(this.data.entries()).map(([observableKey, observableData]) => [
       observableKey,

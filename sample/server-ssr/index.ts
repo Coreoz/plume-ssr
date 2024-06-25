@@ -57,6 +57,7 @@ injector.getInstance(SsrServer)
   .createExpressServer(ssrRequestHandler(
     injector.getInstance(CurrentHttpRequestContainer),
     injector.getInstance(SsrLocationContextHolder),
+    injector.getInstance(ServerSsrObservableManager),
     injector.getInstance(HttpPromiseMonitor),
   ))
   .then((app) => {

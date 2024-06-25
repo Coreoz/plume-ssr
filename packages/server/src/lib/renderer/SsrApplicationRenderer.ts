@@ -1,5 +1,4 @@
 import express from 'express';
-import { extractMonitorContextData } from 'plume-ssr-browser';
 import { PromiseMonitor } from 'simple-http-rest-client';
 import { Logger } from 'simple-logging-system';
 
@@ -18,10 +17,12 @@ export interface ApplicationHtmlRenderer<T extends RenderedApplication> {
  * Object containing the application once rendered by the SSR server using an {@link ApplicationHtmlRenderer}.
  *
  * @property {string} appHtml Application rendered as an HTML string
+ * @property {string} appData Application data (SSR observables) rendered as a JS script string
  * @property {string} redirectUrl New Url, If the application router triggers a redirection
  */
 export interface RenderedApplication {
   appHtml: string;
+  appData: string;
   redirectUrl: string;
 }
 
@@ -37,6 +38,17 @@ export interface SsrRenderOption {
 }
 
 const logger = new Logger('renderSsrApplication');
+
+/**
+ * Extract context data from an array promiseMonitors.
+ * It is useful especially for logging reasons.
+ * @param promiseMonitors The promise monitors array
+ */
+export const extractMonitorContextData = (promiseMonitors: PromiseMonitor[]) => promiseMonitors
+  .flatMap((promiseMonitor) => promiseMonitor
+    .getRunningPromisesWithInfo()
+    .map((runningPromise) => runningPromise[1].promiseInfo),
+  );
 
 /**
  * Perform an SSR of the application.

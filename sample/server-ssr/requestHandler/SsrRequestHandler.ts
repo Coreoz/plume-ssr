@@ -7,18 +7,20 @@ import {
 import { SsrLocationContextHolder } from 'plume-ssr-browser';
 import HttpPromiseMonitor from '../../src/api/HttpPromiseMonitor';
 import createAppRenderer from '../renderer/AppRenderer';
+import ServerSsrObservableManager from '../observable/ServerSsrObservableManager';
 
 function ssrRequestHandler(
   currentHttpRequestContainer: CurrentHttpRequestContainer,
   ssrLocationContextHolder: SsrLocationContextHolder,
+  observableManager: ServerSsrObservableManager,
   ...promiseMonitors: HttpPromiseMonitor[]
 ): SsrHtmlRenderer {
   return async (
     request, response, indexHtmlTemplate,
   ) => {
-    const { appHtml, redirectUrl } = await renderSsrApplication<RenderedApplication>(
+    const { appHtml, appData, redirectUrl } = await renderSsrApplication<RenderedApplication>(
       request,
-      createAppRenderer(currentHttpRequestContainer, ssrLocationContextHolder),
+      createAppRenderer(currentHttpRequestContainer, ssrLocationContextHolder, observableManager),
       promiseMonitors,
     );
 
@@ -35,7 +37,9 @@ function ssrRequestHandler(
     /*
      * => Ici customisation du template html avec mustache : https://github.com/janl/mustache.js <=
      */
-    const htmlTemplateRendered = indexHtmlTemplate.replace('<!--app-html-->', appHtml);
+    const htmlTemplateRendered = indexHtmlTemplate
+      .replace('<!--app-html-->', appHtml)
+      .replace('<!--app-data-->', appData);
     response
       .status(200)
       .set({ 'Content-Type': 'text/html' })

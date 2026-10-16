@@ -30,7 +30,7 @@ export type TimeoutController = {
 export default function useTimeout(callback: () => void, delayInMillis: number) {
   // it's important to have a React ref here: it enables to keep a reference to the last version of the callback
   const callbackRef = useRef(callback);
-  const timeoutIdRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     callbackRef.current = callback;

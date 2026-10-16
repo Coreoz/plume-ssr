@@ -41,6 +41,7 @@ yarn-error.log*
 /.nyc_output/
 /.parcel-cache/
 tsconfig.tsbuildinfo
+.swc
 
 # yarn
 .yarn/*

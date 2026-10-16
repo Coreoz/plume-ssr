@@ -2,8 +2,8 @@
   "compilerOptions": {
     "incremental": true,
     "target": "ESNext",
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
     "declaration": true,
     "inlineSourceMap": true,
     "skipLibCheck": true, /* sinon plume-ts-di ne compile pas... */
@@ -40,10 +40,6 @@
     "lib": [
       "esnext",
       "dom"
-    ],
-    "plugins": [
-      { "transform": "ts-transformer-classname", "import": "diTransformerAdapter" },
-      { "transform": "ts-transformer-classname", "import": "classNameTransformer" }
     ],
     "jsx": "react"
   },

@@ -23,11 +23,7 @@
     "noImplicitAny": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "plugins": [
-      { "transform": "ts-transformer-classname", "import": "diTransformerAdapter" },
-      { "transform": "ts-transformer-classname", "import": "classNameTransformer" }
-    ]
+    "noImplicitThis": true
   },
   "include": [
     "server-ssr/index.ts",

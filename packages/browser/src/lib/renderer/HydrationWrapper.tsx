@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 type Props = {
   onAppMounted: () => void,
-  app: JSX.Element,
+  app: React.ReactElement,
 };
 
 /**
@@ -27,6 +27,6 @@ function HydrationWrapper({ onAppMounted, app }: Props) {
  * @param onAppMounted callback executed once the application is mounted
  * @param app application to wrap
  */
-export const hydrationWrapper = (onAppMounted: () => void, app: JSX.Element) => (
+export const hydrationWrapper = (onAppMounted: () => void, app: React.ReactElement) => (
   <HydrationWrapper onAppMounted={onAppMounted} app={app} />
 );

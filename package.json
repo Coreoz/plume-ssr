@@ -17,26 +17,27 @@
   "scripts": {
     "start": "yarn workspace sample-plume-ssr start",
     "start-server": "yarn workspace sample-plume-ssr start-server",
-    "build": "yarn workspaces foreach --from 'plume-ssr-**' run build",
-    "typescript": "yarn workspaces foreach --from 'plume-ssr-**' run typescript",
-    "eslint": "yarn workspaces foreach --from 'plume-ssr-**' run eslint",
-    "test": "yarn workspaces foreach --from 'plume-ssr-**' run test",
-    "versions": "yarn workspaces foreach version",
+    "build": "yarn workspaces foreach -R --from 'plume-ssr-**' run build",
+    "typescript": "yarn workspaces foreach -R --from 'plume-ssr-**' run typescript",
+    "eslint": "yarn workspaces foreach -R --from 'plume-ssr-**' run eslint",
+    "test": "yarn workspaces foreach -R --from 'plume-ssr-**' run test",
+    "versions": "yarn workspaces foreach -R version",
     "prepare-release": "yarn workspace plume-ssr-browser prepare-release && yarn workspace plume-ssr-server prepare-release"
   },
   "sideEffects": false,
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.49.0",
-    "@typescript-eslint/parser": "^5.49.0",
-    "eslint": "^8.32.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
+    "eslint": "^9.39.2",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "typescript": "4.9.4"
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "typescript": "^5.9.3"
   },
   "workspaces": [
     "sample",
     "packages/*"
   ],
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@4.12.0"
 }

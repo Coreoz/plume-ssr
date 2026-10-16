@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import * as ReactDOM from 'react-dom/client';
 import { PromiseMonitor } from 'simple-http-rest-client';
@@ -41,7 +42,7 @@ const logger = new Logger('RenderBrowserApplication');
  * @param [option={maxRender:10}] - used to configure the application rendering
  */
 export async function renderBrowserApplication(
-  reactApp: JSX.Element,
+  reactApp: ReactElement,
   rootElementId: string = 'root',
   promiseMonitors: PromiseMonitor[] = [],
   option: BrowserRenderOption = {
@@ -72,7 +73,7 @@ export async function renderBrowserApplication(
   logger.info(`DOM rendered in ${Date.now() - currentMillis}ms`);
 }
 
-function renderDummyApp(reactApp: JSX.Element) {
+function renderDummyApp(reactApp: ReactElement) {
   // Try to re-render the application while there are pending Promises
   const dummyDiv = document.createElement('div');
   const dummyRoot = ReactDOM.createRoot(dummyDiv);

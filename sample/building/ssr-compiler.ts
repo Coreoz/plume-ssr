@@ -1,5 +1,7 @@
 import { build } from 'esbuild';
 import { filterImportsPlugin } from 'plume-ssr-server';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
 
 /**
  * Utilisé pour builder le serveur SSR.
@@ -10,9 +12,13 @@ import { filterImportsPlugin } from 'plume-ssr-server';
  * `yarn install` sur la prod
  * - Soit Vite n'arrive pas à gérer correctement les dépendances node `fs` et `path` quand l'option de Vite
  * `ssr.noExternal` est activée: `Cannot bundle Node.js built-in "fs" imported from ...`
+ *
+ * `absWorkingDir` est fixé à un dossier neutre (`tmpdir()`) et les `nodePaths` sont fournis explicitement
+ * pour qu'esbuild n'adopte pas un manifeste Yarn PnP trouvé dans un dossier parent (le dépôt peut être
+ * imbriqué dans un workspace PnP), tout en continuant à résoudre les dépendances via `node_modules`.
  */
-const srcFile = 'ts-built/server-ssr/index.js';
-const outFile = 'build/server/index.js';
+const srcFile = resolve('ts-built/server-ssr/index.js');
+const outFile = resolve('build/server/index.js');
 const currentMillis = Date.now();
 
 console.log('Starting SSR server bundling...');
@@ -22,6 +28,8 @@ build({
   bundle: true,
   outfile: outFile,
   platform: 'node',
+  absWorkingDir: tmpdir(),
+  nodePaths: [resolve('node_modules'), resolve('../node_modules')],
   // Vite is used only for development, it can be ignored for production bundle
   external: ['vite', 'pnpapi'],
 }).then(() => {

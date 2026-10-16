@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import { Injector } from 'plume-ts-di';
 import { installSsrModule } from '../../lib/plume-ssr-module';
 import {

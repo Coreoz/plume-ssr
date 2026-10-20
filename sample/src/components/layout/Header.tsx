@@ -9,18 +9,20 @@ function LocaleSelectorContainer() {
   const localeService = getGlobalInstance(LocaleService);
   const currentLocale = useObservable(localeService.getCurrentLocale());
 
-  return <LocaleSelector
-    currentLocale={currentLocale}
-    availableLocales={localeService.getAvailableLocales()}
-    onLocaleSelected={(newLocale) => localeService.setCurrentLocale(newLocale)}
-  />;
+  return (
+    <LocaleSelector
+      currentLocale={currentLocale}
+      availableLocales={localeService.getAvailableLocales()}
+      onLocaleSelected={(newLocale) => localeService.setCurrentLocale(newLocale)}
+    />
+  );
 }
 
 export default function Header() {
   return (
     <header id="main-header">
-      <Link to={'/'}>Home</Link>
-      <Link to={'/Other'}>Autre</Link>
+      <Link to="/">Home</Link>
+      <Link to="/Other">Autre</Link>
       <LocaleSelectorContainer />
     </header>
   );

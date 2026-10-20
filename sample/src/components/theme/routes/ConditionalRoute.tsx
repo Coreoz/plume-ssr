@@ -3,9 +3,9 @@ import { Observable } from 'micro-observables';
 import { Navigate, useObservable } from 'plume-ssr-browser';
 
 type Props = {
-  shouldDisplayRoute: Observable<unknown>;
-  defaultRoute: string;
-  children?: React.ReactNode;
+  shouldDisplayRoute: Observable<unknown>,
+  defaultRoute: string,
+  children?: React.ReactNode,
 };
 
 export default function ConditionalRoute({

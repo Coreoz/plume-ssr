@@ -1,5 +1,5 @@
 export interface ErrorFunction {
-  (...args: string[]): string;
+  (...args: string[]): string,
 }
 
 export type Translations = {
@@ -48,13 +48,13 @@ export type Translations = {
   'error.field.required': string,
   'error.field.email-wrong-format': string,
   'http-errors': {
-    'INTERNAL_ERROR': string,
-    'NETWORK_ERROR': string,
-    'TIMEOUT_ERROR': string,
-    'FORBIDDEN_ERROR': string,
-    'WRONG_LOGIN_OR_PASSWORD': string,
-    'TOO_MANY_WRONG_ATTEMPS': (seconds: string) => string,
-    'FIELD_REQUIRED': (fieldName: string) => string,
-    'MESSAGE': (message: string) => string,
+    INTERNAL_ERROR: string,
+    NETWORK_ERROR: string,
+    TIMEOUT_ERROR: string,
+    FORBIDDEN_ERROR: string,
+    WRONG_LOGIN_OR_PASSWORD: string,
+    TOO_MANY_WRONG_ATTEMPS: (seconds: string) => string,
+    FIELD_REQUIRED: (fieldName: string) => string,
+    MESSAGE: (message: string) => string,
   },
 };

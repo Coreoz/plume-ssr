@@ -19,13 +19,15 @@ export default function Home() {
     loader: () => sampleService.sayHello(nameParam),
   }], { pageName: nameParam });
 
-  return <div id="home-layout">
-    <h1>{messages['home.title']}</h1>
-    <div>
-      <h2>API call test</h2>
-      <WithLoadingData dataLoader={pageLoader}>
-        <ShowSample />
-      </WithLoadingData>
+  return (
+    <div id="home-layout">
+      <h1>{messages['home.title']}</h1>
+      <div>
+        <h2>API call test</h2>
+        <WithLoadingData dataLoader={pageLoader}>
+          <ShowSample />
+        </WithLoadingData>
+      </div>
     </div>
-  </div>;
+  );
 }

@@ -19,12 +19,14 @@ export function Navigate({
 }: NavigateProps) {
   const { setContextRedirectUrl } = useUpdateLocationContext();
   setContextRedirectUrl(to);
-  return <ReactRouterNavigate
-    to={to}
-    replace={replace}
-    state={state}
-    relative={relative}
-  />;
+  return (
+    <ReactRouterNavigate
+      to={to}
+      replace={replace}
+      state={state}
+      relative={relative}
+    />
+  );
 }
 
 /**

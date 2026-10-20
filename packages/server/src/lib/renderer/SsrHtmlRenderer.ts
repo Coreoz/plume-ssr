@@ -10,5 +10,5 @@ export interface SsrHtmlRenderer {
     request: express.Request,
     response: express.Response,
     indexHtmlTemplate: string,
-  ): Promise<unknown>;
+  ): Promise<unknown>,
 }

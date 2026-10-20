@@ -6,7 +6,7 @@ import { OutputChunk, OutputAsset } from 'rollup';
  *
  * Le JS n'est pas pré-chargé pour accélérer le chargement : il n'est pas nécessaire pour afficher les pages
  */
-// eslint-disable-next-line import/prefer-default-export
+
 export function viteInlineCss(): Plugin {
   return {
     name: 'vite:inlineCss',

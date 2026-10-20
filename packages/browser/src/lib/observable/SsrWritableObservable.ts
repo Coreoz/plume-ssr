@@ -30,7 +30,7 @@ export type SsrObservableContent<T, K extends string> = {
  * A {@link WritableObservable} with its SSR configuration
  */
 export class SsrWritableObservable<T, K extends string> {
-  constructor(private readonly baseObservable: WritableObservable<SsrObservableContent<T, K> | undefined >) {
+  constructor(private readonly baseObservable: WritableObservable<SsrObservableContent<T, K> | undefined>) {
   }
 
   set(val: SsrObservableContent<T, K> | undefined | Observable<SsrObservableContent<T, K> | undefined>) {

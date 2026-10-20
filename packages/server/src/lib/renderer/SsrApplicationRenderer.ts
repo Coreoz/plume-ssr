@@ -11,7 +11,7 @@ import { Logger } from 'simple-logging-system';
  * @returns RenderedApplication - Object containing the application rendered as string, and the redirection url.
  */
 export interface ApplicationHtmlRenderer<T extends RenderedApplication> {
-  (request: express.Request): T;
+  (request: express.Request): T,
 }
 
 /**
@@ -21,8 +21,8 @@ export interface ApplicationHtmlRenderer<T extends RenderedApplication> {
  * @property {string} redirectUrl New Url, If the application router triggers a redirection
  */
 export interface RenderedApplication {
-  appHtml: string;
-  redirectUrl: string;
+  appHtml: string,
+  redirectUrl: string,
 }
 
 /**
@@ -77,7 +77,6 @@ export async function renderSsrApplication<T extends RenderedApplication>(
         },
       );
 
-      // eslint-disable-next-line no-await-in-loop
       await Promise.allSettled(promiseMonitors.flatMap((promiseMonitor) => promiseMonitor.getRunningPromises()));
 
       logger.info('Re-render the React application now that the Promises have been resolved');

@@ -6,7 +6,7 @@ export type SsrObservableName = 'sample' | 'contentful-footer' | 'contentful-pag
 export type SsrObservableKey = 'lang' | 'pageName';
 
 export class SsrBrowserObservableManager extends SsrObservableManager<SsrObservableKey> {
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override observable<T>(_observableName: SsrObservableName): SsrWritableObservable<T, SsrObservableKey> {
     return new SsrWritableObservable(observable(undefined));
   }

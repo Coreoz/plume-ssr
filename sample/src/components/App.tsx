@@ -12,8 +12,8 @@ const logger = new Logger('App');
 
 type AppProps = {
   // Return type Router that is not exported by react-router-dom
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  createRouter: (routes: RouteObject[]) => any
+
+  createRouter: (routes: RouteObject[]) => any,
 };
 
 export default function App({ createRouter }: AppProps) {
@@ -41,7 +41,7 @@ export default function App({ createRouter }: AppProps) {
         },
         {
           path: '/test-use-navigate',
-          element: <TestUseNavigate/>,
+          element: <TestUseNavigate />,
         },
         {
           index: true,

@@ -9,7 +9,6 @@ import { LoggerArguments } from './LoggerArguments';
  */
 export default class JsonLogger {
   static logMessage(level: LoggerLevel, loggerName: string, message: string, ...args: unknown[]) {
-    // eslint-disable-next-line no-console
     console.log(JSON.stringify(JsonLogger.buildLog(level, loggerName, message, ...args)));
   }
 

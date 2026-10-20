@@ -12,12 +12,17 @@ export default function ErrorPage() {
   logger.warn('Error page displayed', { error });
 
   if (isRouteErrorResponse(error) && error.status === 404) {
-    return <Layout>
-      <div>
-        <h2>Page not found</h2>
-        <div>Sorry, we didn&apos;t find this page. <Link to={HOME}>Go to the home page</Link></div>
-      </div>
-    </Layout>;
+    return (
+      <Layout>
+        <div>
+          <h2>Page not found</h2>
+          <div>
+            Sorry, we didn&apos;t find this page.
+            <Link to={HOME}>Go to the home page</Link>
+          </div>
+        </div>
+      </Layout>
+    );
   }
 
   throw error;

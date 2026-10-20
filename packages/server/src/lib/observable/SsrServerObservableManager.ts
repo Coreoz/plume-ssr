@@ -25,7 +25,7 @@ export type SsrObservableCacheOptions = {
 export type SsrObservableParameters<K extends string> = {
   name: string,
   dependencyKeys: K[],
-  cacheOptions?: SsrObservableCacheOptions
+  cacheOptions?: SsrObservableCacheOptions,
   // TODO add options here: cache duration, max entries, etc. + clean up task
 };
 
@@ -37,7 +37,7 @@ export type SsrObservableParameters<K extends string> = {
  */
 type SsrObservableDataValue = {
   data: SsrObservableContent<unknown, string>,
-  lastFetchTimestamp: number
+  lastFetchTimestamp: number,
 };
 
 /**
@@ -48,7 +48,7 @@ type SsrObservableData<K extends string> = {
   dependencyKeys: Set<K>,
   currentConfig?: Record<string, SsrConfigValue>,
   latestDataByConfig: Map<string, SsrObservableDataValue>,
-  cacheOptions: SsrObservableCacheOptions
+  cacheOptions: SsrObservableCacheOptions,
 };
 
 const logger = new Logger('SsrServerObservable');
@@ -60,8 +60,8 @@ const logger = new Logger('SsrServerObservable');
  * will be equals to `makeConfigKey({b: 2, a: 1}))`
  */
 export const makeConfigKey = (config: Record<string, unknown>) =>
-  // In JS, Map cannot use a composite key, to it has to be stringified
-  // eslint-disable-next-line implicit-arrow-linebreak
+// In JS, Map cannot use a composite key, to it has to be stringified
+
   JSON.stringify(
     config,
     Object.keys(config)
@@ -72,12 +72,11 @@ export const makeConfigKey = (config: Record<string, unknown>) =>
 const filterConfig = <K extends string>(
   config: Record<K, SsrConfigValue>, dependencyKeys: Set<K>,
 ): Record<K, SsrConfigValue> => Object.keys(config)
-    .filter((key) => dependencyKeys.has(key as K))
-    .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
-    // eslint-disable-next-line no-param-reassign
-      filteredConfig[key as K] = config[key as K];
-      return filteredConfig;
-    }, {} as Record<K, SsrConfigValue>);
+  .filter((key) => dependencyKeys.has(key as K))
+  .reduce((filteredConfig: Record<K, SsrConfigValue>, key) => {
+    filteredConfig[key as K] = config[key as K];
+    return filteredConfig;
+  }, {} as Record<K, SsrConfigValue>);
 
 export const areRecordsEqual = (record1: Record<string, unknown>, record2: Record<string, unknown>) => {
   const keys1 = Object.keys(record1);

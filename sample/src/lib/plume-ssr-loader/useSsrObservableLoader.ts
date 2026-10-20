@@ -1,3 +1,5 @@
+// `SsrWritableObservable` is only referenced by the JSDoc `{@link}` tags below.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SsrConfigValue, SsrObservableContent, SsrWritableObservable } from 'plume-ssr-browser';
 import { Observable } from 'micro-observables';
 import {
@@ -44,12 +46,12 @@ export type SsrObservableDataHandler<T, K extends string> = {
  */
 export function useSsrObservableLoader<
   K extends string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   H extends SsrObservableDataHandler<any, K>[],
 >(
   observableSources: H,
   dependencies: Partial<Record<K, SsrConfigValue>>,
-) : DataLoader<unknown[]> {
+): DataLoader<unknown[]> {
   return useObservableLoader(
     observableSources.map((observableSource) => ({
       dataObservable: observableSource.dataObservable,
@@ -58,7 +60,7 @@ export function useSsrObservableLoader<
           ? observableSource.isLoadedPredicate(observableContent?.data)
           : Boolean(observableContent)
       ) && Boolean(observableContent?.config)
-        && areRecordsEqual(observableContent.config, dependencies),
+      && areRecordsEqual(observableContent.config, dependencies),
       loader: observableSource.loader,
     })),
     Object.values(dependencies),

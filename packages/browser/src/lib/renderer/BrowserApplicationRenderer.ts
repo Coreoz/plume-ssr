@@ -111,9 +111,9 @@ async function prepareApplicationForHydration(
 
   for (let i = 0; i < maxRender; i += 1) {
     // attend un cycle supplémentaire pour vérifier que React n'est pas en train de monter des modules dynamiques
-    // eslint-disable-next-line no-await-in-loop
+
     await new Promise(
-      // eslint-disable-next-line no-promise-executor-return
+
       (resolve) => setTimeout(resolve, 0),
     );
 
@@ -125,7 +125,6 @@ async function prepareApplicationForHydration(
       promiseMonitors: extractMonitorContextData(promiseMonitors),
     });
 
-    // eslint-disable-next-line no-await-in-loop
     await Promise.allSettled(promiseMonitors.flatMap((promiseMonitor) => promiseMonitor.getRunningPromises()));
 
     logger.info('Re-render the React application now that the Promises have been resolved');

@@ -21,7 +21,6 @@ export class SimpleLogger {
   }
 
   private static internalLog(level: LoggerLevel, message: string, ...args: unknown[]) {
-    // eslint-disable-next-line no-console
     console.log(
       `${SimpleLogger.levelToColor(level)}%s\x1b[0m`,
       message,

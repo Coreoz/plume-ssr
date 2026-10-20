@@ -35,14 +35,13 @@ export default class MessageService {
    */
   static httpError(messages: Translations, error: HttpError): string {
     const translatedArguments = (error.statusArguments ?? []).map((argument) => {
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       const translation = (messages as any)[argument];
       if (translation && typeof translation === 'string') {
         return translation;
       }
       return argument;
     });
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+
     const translatedMessage = (messages['http-errors'] as any)[error.errorCode];
     if (translatedMessage) {
       if (typeof translatedMessage === 'function') {

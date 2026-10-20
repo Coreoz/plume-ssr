@@ -13,7 +13,6 @@ export class ServerLogger {
     this.isJsonLogger = Boolean(programArguments.getArgs()['json-logs']);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   setupServerLogs() {
     if (this.isJsonLogger) {
       ApplicationLogger.setLoggerFunction(JsonLogger.logMessage);

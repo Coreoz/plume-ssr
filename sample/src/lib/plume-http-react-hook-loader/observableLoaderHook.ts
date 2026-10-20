@@ -75,13 +75,13 @@ export type DataLoader<T> = {
  * Errors must be of type {@link HttpError}
  */
 export type CatchablePromise = {
-  catch: (consumer: (error: HttpError) => void) => unknown;
+  catch: (consumer: (error: HttpError) => void) => unknown,
 };
 
 /**
  * {@link useObservableLoaderConfigurable} configuration object.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type ObservableLoaderConfig<T extends ObservableDataHandler<any>[]> = {
   /**
    * The hook used to execute the {@link Observable} data load, see {@link DataLoader.loader}
@@ -97,7 +97,7 @@ export type ObservableLoaderConfig<T extends ObservableDataHandler<any>[]> = {
  * A configurable version of {@link useObservableLoader} that enables to
  * specify the hook used to execute the {@link Observable} data load, see {@link DataLoader.loader}.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function useObservableLoaderConfigurable<T extends ObservableDataHandler<any>[]>(
   config: ObservableLoaderConfig<T>): DataLoader<unknown[]> {
   // first check the data loaded status
@@ -160,11 +160,11 @@ export function useObservableLoaderConfigurable<T extends ObservableDataHandler<
  * This returns then a {@link DataLoader} that enables to easily monitor the loading status
  * of the {@link Observable} data.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function useObservableLoader<T extends ObservableDataHandler<any>[]>(
   observableSources: T,
   dependencies?: DependencyList,
-) : DataLoader<unknown[]> {
+): DataLoader<unknown[]> {
   return useObservableLoaderConfigurable({
     observableSources,
     useOnComponentMountedHook: (onMounted) => useOnComponentMountedWithSsrSupport(onMounted, dependencies),
